@@ -10,8 +10,14 @@ import {
   updateDoc,
   serverTimestamp,
   orderBy,
-  writeBatch,
+  
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+import {
+    getAuth,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -34,42 +40,40 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize  Database and get a reference to the service
 const database = getFirestore(app);
+const auth = getAuth();
 
-const colRef = collection(database, "bookings");
+const colRef = collection(database, "messages");
 // const notRef = collection(database, "orderNotification");
 
 
-  async function updateNotificationStatus() {
-    const notificationRef = collection(database, "orderNotification");
 
-    
-    const batch = writeBatch(database);
-  
-    const unsubscribe = onSnapshot(notificationRef, (querySnapshot) => {
-      console.log(querySnapshot.size);
-      querySnapshot.forEach((doc) => {
-        const docRef = doc.ref;
-        batch.update(docRef, { status: "read" });
-      });
-  
-       batch.commit(); batch.commit().then(() => {
-        console.log("Batch update completed successfully.");
-      }).catch((error) => {
-        console.error("Error committing batch update:", error);
-      });
-    });
-  
-    // Call unsubscribe when you are finished listening to the snapshot.
-    // For example, if this function is used in a Vue.js component, you could
-    // call unsubscribe in the "beforeDestroy" hook.
-    // unsubscribe();
-  }
-  
+// Function to convert Firebase timestamp to a formatted date and time
+function convertFirebaseTimestamp(timestamp) {
+  // Create a new Firebase timestamp object
+  const firebaseTimestamp = Timestamp.fromMillis(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
 
-async function getBooking() {
+  // Convert the Firebase timestamp to JavaScript Date
+  const date = firebaseTimestamp.toDate();
+
+  // Format the date and time without the time zone
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+  return date.toLocaleString('en-US', options);
+}
+
+async function getMessages() {
 
   const currentYear = new Date().getFullYear();
   document.getElementById("currentYear").textContent = currentYear;
+  //check if user is logged in or not
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const uid = user.uid;
+  
+    } else {
+  
+      window.location.href = "login.html";
+    }
+  });
   let tableRow = document.getElementById("bookingTable");
   const loader = document.getElementById("loader");
   // show the loader initially
@@ -77,7 +81,7 @@ async function getBooking() {
 
   try {
 
-  
+
     
 
     const q = query(colRef, orderBy("timestamp", "desc"));
@@ -89,61 +93,21 @@ async function getBooking() {
       docsSnap.forEach((doc) => {
         index++;
         let data = doc.data();
+    
         let row = `<tr>
               <td>${index}</td>
-              <td>${data.orderId}</td>
-              <td>${data.name}</td>
+              <td>${data.recipientName}</td>
               <td>
-                <div>${data.service}</div>
+                ${data.recipientEmail}
               </td>
-              <td>${data.phone}</td>
-              <td>${data.email}</td>
-              <td>${data.bookdate} ${data.booktime}</td>
-              <td>${data.sourceType}</td>
-              <td id="instruction">${data.instruction}</td>
-              <td>
-                <label class="badge ${
-                  data.status == "Pending"
-                    ? "badge-warning"
-                    : data.status == "Accepted"
-                    ? "badge-success"
-                    : data.status == "Cancelled"
-                    ? "badge-primary"
-                    : data.status == "Completed"
-                    ? "badge-dark"
-                    : "badge-danger"
-                }" id="statusLabel"
-                  >${data.status}</label
-                >
-              </td>
-             
-              <td>
-                <i
-                  class="icon-ellipsis"
-                  id="dropdownMenuSplitButton1" data-toggle="${
-                    data.status == "Completed"||data.status == "Cancelled" ? "" : "dropdown"
-                  }" aria-haspopup="true" aria-expanded="false"
-                ></i>
-                <div
-                  class="dropdown-menu"
-                  aria-labelledby="dropdownMenuSplitButton1"
-                >
-                  <h6 class="dropdown-header">Action</h6>
-                  <a class="dropdown-item accept-action" data-docid="${
-                    doc.id
-                  }">Accept</a>
-                  <a class="dropdown-item complete-action" data-docid="${
-                    doc.id
-                  }">Complete</a>
-                  <a class="dropdown-item cancel-action" data-docid="${
-                    doc.id
-                  }">Cancel</a>
-                  <a class="dropdown-item reject-action" data-docid="${
-                    doc.id
-                  }">Reject</a>
-                
-                </div>
-              </td>
+              <td>${data.recipientPhone}</td>
+           
+              <td>${data.subject}</td>
+              <td>${data.message}</td>
+              <td>${data.optionalLink}</td>
+              <td>${convertFirebaseTimestamp(data.timestamp)}</td>
+
+            
             </tr>`;
 
         rows += row;
@@ -321,6 +285,6 @@ async function getBooking() {
 
 window.onload = function () {
   // call both functions
-  getBooking();
- updateNotificationStatus();
+  getMessages();
+
 }; 

@@ -50,10 +50,14 @@ const auth = getAuth();
 //check if user is logged in or not
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
     const uid = user.uid;
 
+    // ...
   } else {
-
+    // User is signed out
+    // ...
     window.location.href = "login.html";
   }
 });
@@ -65,9 +69,9 @@ document.getElementById("currentYear").textContent = currentYear;
 
 const addProductBtn = document.getElementById("addProductBtn");
 
-document.getElementById("productForm").addEventListener("submit", addProduct);
+document.getElementById("serviceForm").addEventListener("submit", addProduct);
 
-const imageInput = document.getElementById("product-image");
+const imageInput = document.getElementById("service-image");
 const imagePreview = document.getElementById("imagePreview");
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
@@ -84,7 +88,7 @@ imageInput.addEventListener("change", () => {
 });
 
 
-var inputField = document.getElementById("productTitle");
+var inputField = document.getElementById("serviceName");
 var matchingValuesList = document.createElement("ul");
 document.getElementById("matchingValuesContainer").appendChild(matchingValuesList);
 
@@ -95,8 +99,8 @@ inputField.addEventListener("input", function () {
 
   // Query the Firestore collection for matching values
   const q = query(
-    collection(database, "products"),
-    orderBy("productName"),
+    collection(database, "service"),
+    orderBy("serviceName"),
     startAt(enteredValue),
     endAt(enteredValue + "\uf8ff")
   );
@@ -104,8 +108,8 @@ inputField.addEventListener("input", function () {
   onSnapshot(q, (querySnapshot) => {
     // Get the matching values
     var matchingValues = querySnapshot.docs.map(function (doc) {
-      console.log(doc.data().productName);
-      return doc.data().productName;
+      console.log(doc.data().serviceName);
+      return doc.data().serviceName;
     });
 
     // Clear the existing list items
@@ -149,17 +153,21 @@ function addProduct(e) {
 
   // Get values
 
-  var productTitle = getInputVal("productTitle");
-  var productPrice = getInputVal("productPrice");
-  var productCat = getInputVal("productCat");
-  var productQty = getInputVal("productQuantiy");
-  var productDescription = getInputVal("productDescription");
+  var serviceName = getInputVal("serviceName");
+  var servicePrice = getInputVal("servicePrice");
+  var serviceDuration = getInputVal("serviceDuration");
+  var serviceCat = getInputVal("serviceCat");
+  var serviceDescription = getInputVal("serviceDescription");
 
   // const storRef = sRef(storage,'products');
-  const file = document.querySelector("#product-image").files[0];
-  if (!file) return;
+  const file = document.querySelector("#service-image").files[0];
+  if (!file){
+    alert("Service image is required");
+    addProductBtn.innerHTML = "Submit";
+     return;
+  }  
 
-  const storageRef = sRef(storage, `productsImages/${file.name}` + new Date());
+  const storageRef = sRef(storage, `serviceImages/${file.name}` + new Date());
   const uploadTask = uploadBytesResumable(storageRef, file);
 
   uploadTask.on(
@@ -178,13 +186,13 @@ function addProduct(e) {
         // setImgUrl(downloadURL)
         pictureUrl = downloadURL;
         setTimeout(
-          addProducts(
+            addService(
             pictureUrl,
-            productTitle,
-            productPrice,
-            productCat,
-            productQty,
-            productDescription
+            serviceName,
+            servicePrice,
+            serviceDuration,
+            serviceCat,
+            serviceDescription
           ),
           5000
         );
@@ -199,22 +207,22 @@ function getInputVal(id) {
 }
 
 // Save products to firebase
-async function addProducts(
-  productPicture,
-  productName,
-  productPrice,
-  productCat,
-  productQty,
-  productDesc
+async function addService(
+  servicePicture,
+  serviceName,
+  servicePrice,
+  serviceDuration,
+  serviceCat,
+  serviceDes
 ) {
   // Add a new document with a generated id.
-  await addDoc(collection(database, "products"), {
-    productPicture: productPicture,
-    productName: productName,
-    productPrice: productPrice,
-    productCategory: productCat,
-    productQty: productQty,
-    productDesc: productDesc,
+  await addDoc(collection(database, "service"), {
+    servicePicture: servicePicture,
+    serviceName: serviceName,
+    servicePrice: servicePrice,
+    serviceDuration: serviceDuration,
+    serviceCat: serviceCat,
+    serviceDes: serviceDes,
     timestamp: serverTimestamp(),
   })
     .then((docRef) => {
@@ -223,14 +231,14 @@ async function addProducts(
       createAlert(
         "",
         "Success!",
-        productName + " was added successfully",
+        serviceName + " was added successfully",
         "success",
         true,
         true,
         "pageMessages"
       );
       console.log("Product has been added successfully");
-      document.getElementById("productForm").reset();
+      document.getElementById("serviceForm").reset();
       imagePreview.setAttribute("src", "");
     })
     .catch((error) => {
@@ -246,11 +254,11 @@ async function addProducts(
         "pageMessages"
       );
       console.log(error);
-      // document.getElementById("productForm").reset();
+      // document.getElementById("serviceForm").reset();
     });
 
   addDoc(collection(database, "log"), {
-    comment: "Added " + productName,
+    comment: "Added " + serviceName,
     timestamp: serverTimestamp(),
   })
     .then((docRef) => {
@@ -258,7 +266,7 @@ async function addProducts(
     })
     .catch((error) => {
       console.log(error);
-      // document.getElementById("productForm").reset();
+      // document.getElementById("serviceForm").reset();
     });
 }
 

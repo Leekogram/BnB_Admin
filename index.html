@@ -19,7 +19,7 @@
   <!-- inject:css -->
   <link rel="stylesheet" href="css/vertical-layout-light/style.css">
   <!-- endinject -->
-  <link rel="shortcut icon" href="images/favicon.png" />
+  <link rel="shortcut icon" href="images/favicon.ico" />
   <style>
     /* Modal styles */
     .modal {
@@ -34,7 +34,8 @@
 
       background-color: rgba(0, 0, 0, 0.4);
     }
-    #notSpan{
+
+    #notSpan {
       visibility: hidden;
     }
 
@@ -53,7 +54,8 @@
 
     #bookingloader,
     stockloader,
-    customeloader {
+    customeloader,
+    orderloader {
       display: none;
       position: absolute;
       top: 0;
@@ -113,8 +115,7 @@
         </ul>
         <ul class="navbar-nav navbar-nav-right">
           <li class="nav-item dropdown">
-            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
-              data-toggle="dropdown">
+            <a class="nav-link  dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
               <i class="icon-bell mx-0"></i>
               <span class="count" id="count"></span>
             </a>
@@ -163,100 +164,10 @@
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
 
-      <div id="right-sidebar" class="settings-panel">
-        <i class="settings-close ti-close"></i>
-        <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab"
-              aria-controls="todo-section" aria-expanded="true">TO DO</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab"
-              aria-controls="chats-section">MESSAGES</a>
-          </li>
-        </ul>
-        <div class="tab-content" id="setting-content">
-          <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel"
-            aria-labelledby="todo-section">
-            <div class="add-items d-flex px-3 mb-0">
 
-              <div class="form-group d-flex">
-
-                <button class=" btn btn-primary "><a href="./send-bc-message.html" class="text-white"> Send
-                    Message</a></button>
-              </div>
-
-            </div>
-
-
-          </div>
-          <!-- To do section tab ends -->
-          <div class="tab-pane fade" id="chats-section" role="tabpanel" aria-labelledby="chats-section">
-            <div class="d-flex align-items-center justify-content-between border-bottom">
-              <p class="settings-heading border-top-0 mb-3 pl-3 pt-0 border-bottom-0 pb-0">Customers</p>
-              <small class="settings-heading border-top-0 mb-3 pt-0 border-bottom-0 pb-0 pr-3 font-weight-normal">See
-                All</small>
-            </div>
-            <ul class="chat-list">
-              <li class="list active">
-                <div class="profile"><img src="images/faces/face1.jpg" alt="image"><span class="online"></span></div>
-                <div class="info">
-                  <p>Thomas Douglas</p>
-                  <p>Available</p>
-                </div>
-                <small class="text-muted my-auto">19 min</small>
-              </li>
-              <li class="list">
-                <div class="profile"><img src="images/faces/face2.jpg" alt="image"><span class="offline"></span></div>
-                <div class="info">
-                  <div class="wrapper d-flex">
-                    <p>Catherine</p>
-                  </div>
-                  <p>Away</p>
-                </div>
-                <div class="badge badge-success badge-pill my-auto mx-2">4</div>
-                <small class="text-muted my-auto">23 min</small>
-              </li>
-              <li class="list">
-                <div class="profile"><img src="images/faces/face3.jpg" alt="image"><span class="online"></span></div>
-                <div class="info">
-                  <p>Daniel Russell</p>
-                  <p>Available</p>
-                </div>
-                <small class="text-muted my-auto">14 min</small>
-              </li>
-              <li class="list">
-                <div class="profile"><img src="images/faces/face4.jpg" alt="image"><span class="offline"></span></div>
-                <div class="info">
-                  <p>James Richardson</p>
-                  <p>Away</p>
-                </div>
-                <small class="text-muted my-auto">2 min</small>
-              </li>
-              <li class="list">
-                <div class="profile"><img src="images/faces/face5.jpg" alt="image"><span class="online"></span></div>
-                <div class="info">
-                  <p>Madeline Kennedy</p>
-                  <p>Available</p>
-                </div>
-                <small class="text-muted my-auto">5 min</small>
-              </li>
-              <li class="list">
-                <div class="profile"><img src="images/faces/face6.jpg" alt="image"><span class="online"></span></div>
-                <div class="info">
-                  <p>Sarah Graves</p>
-                  <p>Available</p>
-                </div>
-                <small class="text-muted my-auto">47 min</small>
-              </li>
-            </ul>
-          </div>
-          <!-- chat tab ends -->
-        </div>
-      </div>
       <!-- partial -->
       <!-- partial:partials/_sidebar.html -->
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+      <nav class="sidebar  sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
             <a class="nav-link" href="index.html">
@@ -266,8 +177,16 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="pages/bookings/booking-page.html">
-              <i class="icon-grid-2 menu-icon"></i>
+              <i class="icon-paper menu-icon"></i>
               <span class="menu-title">Bookings</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/orders/orders.html">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Orders</span>
 
             </a>
 
@@ -281,13 +200,35 @@
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
-                  <a class="nav-link" href="./pages/inventory/dashboard.html">View Stock</a>
+                  <a class="nav-link" href="./pages/inventory/viewstock-dashboard.html">View Stock</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="./pages/inventory/add-item.html">Add Stock</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="./pages/inventory/update-stock.html">Update Stock</a>
+                </li>
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-contract menu-icon"></i>
+              <span class="menu-title">Services</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-service">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/service/service-dashboard.html">View Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/service/add-service.html">Add Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/service/update-service.html">Update Service</a>
                 </li>
                 <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
               </ul>
@@ -304,13 +245,13 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
               aria-controls="ui-basic">
-              <i class="icon-paper menu-icon"></i>
+              <i class="icon-columns menu-icon"></i>
               <span class="menu-title">Message</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-message">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="#">View messages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="./pages/message/view_messages.html">View messages</a></li>
                 <li class="nav-item"> <a class="nav-link" href="./send-bc-message.html">Send Message</a></li>
 
               </ul>
@@ -426,7 +367,7 @@
                   <div class="card   bg-warning">
                     <div class="card-body">
                       <p class="mb-4">Total Orders</p>
-                      <p class="fs-30 mb-2" id="totalOrders">0</p>
+                      <p class="fs-30 mb-2" id="totalOrders"></p>
                       <!-- <p>22.00% (30 days)</p> -->
                     </div>
                   </div>
@@ -435,7 +376,7 @@
                   <div class="card card-light-blue bg-info">
                     <div class="card-body">
                       <p class="mb-4">Today’s Orders</p>
-                      <p class="fs-30 mb-2" id="todaysOrders">0</p>
+                      <p class="fs-30 mb-2" id="todaysOrders"></p>
                       <!-- <p>10.00% (30 days)</p> -->
                     </div>
                   </div>
@@ -497,6 +438,47 @@
                           <tbody id="bookingTable">
 
                             <div id="bookingloader">
+                              <div class="spinner"></div>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div id="pagination"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="content-wrapper">
+              <div class="row">
+                <div class="col-lg-12 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Orders</h4>
+                      <p class="card-description ">
+                        <!-- Note: No action can be performed on a completed booking  <span class="text-danger">(Take note when choosing this action)</span>. -->
+                      </p>
+                      <div class="table-responsive">
+                        <table class="table expandable-table ">
+                          <thead>
+                            <tr>
+                              <th>S/N</th>
+                              <th>Customer name</th>
+                              <th>Product</th>
+                              <th>Quantity</th>
+                              <th>Price</th>
+                              <th>Payment Status</th>
+                              <th>Order Status</th>
+
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody id="orderTable">
+
+                            <div id="orderloader">
                               <div class="spinner"></div>
                             </div>
                           </tbody>
@@ -632,7 +614,7 @@
       updateDoc,
       query, where, orderBy
     } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -669,15 +651,8 @@
       //check if user is logged in or not
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
           const uid = user.uid;
-
-
-          // ...
         } else {
-          // User is signed out
-          // ...
           window.location.href = "login.html";
         }
       });
@@ -906,6 +881,285 @@
         console.log(error);
       }
     }
+
+    // fetch orders 
+
+    const orderRef = collection(database, "orders");
+    async function getOrders() {
+
+      const currentYear = new Date().getFullYear();
+      document.getElementById("currentYear").textContent = currentYear;
+      let tableRow = document.getElementById("orderTable");
+      const loader = document.getElementById("orderloader");
+      // show the loader initially
+      loader.style.display = "block";
+
+      try {
+
+
+
+
+        const q = query(orderRef, orderBy("timestamp", "desc"));
+
+        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
+          loader.style.display = "none";
+          let rows = "";
+          let index = 0;
+          const orderCount = docsSnap.size;
+          document.getElementById("totalOrders").innerHTML = orderCount;
+          docsSnap.forEach((doc) => {
+            index++;
+            let data = doc.data();
+
+
+            let row = `<tr>
+            <td>${index}</td>
+      
+            <td>${data.customerName}</td>
+            <td>${data.productName}</td>
+            <td>${data.productQuantity}</td>
+            <td>${data.productPrice}</td>
+            <td>${data.paymentStatus}</td>
+          
+            <td>
+            <label class="badge ${data.orderStatus == "Accepted"
+                ? "badge-info"
+                : data.orderStatus == "Cancelled"
+                  ? "badge-danger"
+                  : data.orderStatus == "Completed"
+                    ? "badge-dark"
+                    : "badge-success"
+              }" id="statusLabel"
+              >${data.orderStatus}</label
+            >
+            
+     </td>
+            
+        
+          
+           
+            <td>
+              <i
+                class="icon-ellipsis"
+                id="dropdownMenuSplitButton1" data-toggle="${data.orderStatus == "Completed" || data.orderStatus == "Cancelled" ? "" : "dropdown"
+              }" aria-haspopup="true" aria-expanded="false"
+              ></i>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="dropdownMenuSplitButton1"
+              >
+                <h6 class="dropdown-header">Action</h6>
+                <a class="dropdown-item accept-action" data-docid="${doc.id
+              }">Accept</a>
+                <a class="dropdown-item complete-action" data-docid="${doc.id
+              }">Complete</a>
+                <a class="dropdown-item cancel-action" data-docid="${doc.id
+              }">Cancel</a>
+
+              
+              </div>
+            </td>
+          </tr>`;
+
+            rows += row;
+          });
+          tableRow.innerHTML = rows;
+          // Add event listener to accept dropdown item
+          const acceptItems = document.querySelectorAll(".accept-action");
+          acceptItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              acceptFunction(docId);
+            });
+          });
+
+          // Add event listener to complete dropdown item
+          const completeItems = document.querySelectorAll(".complete-action");
+          completeItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              completeFunction(docId);
+            });
+          });
+
+          // Add event listener to cancel dropdown item
+          const cancelItems = document.querySelectorAll(".cancel-action");
+          cancelItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              cancelFunction(docId);
+            });
+          });
+
+          // Add event listener to reject dropdown item
+          const rejectItems = document.querySelectorAll(".reject-action");
+          rejectItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              rejectFunction(docId);
+            });
+          });
+        });
+
+
+
+        function acceptFunction(docId) {
+          // Execute your accept function here with the docId parameter
+          console.log("Accept function executed for docId", docId);
+
+          const docRef = doc(database, "orders", docId);
+
+          const data = {
+            orderStatus: "Accepted",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+          addDoc(collection(database, "log"), {
+            comment: "Booking status has been updated to accepted.",
+
+            timestamp: serverTimestamp(),
+          })
+            .then((docRef) => {
+              console.log("Product has been updated successfully");
+            })
+            .catch((error) => {
+              console.log(error);
+              // document.getElementById("productForm").reset();
+            });
+        }
+
+        function completeFunction(docId) {
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "orders", docId);
+
+          const data = {
+            orderStatus: "Completed",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+          addDoc(collection(database, "log"), {
+            comment: "order status has been update to completed.",
+
+            timestamp: serverTimestamp(),
+          })
+            .then((docRef) => {
+              console.log("Order has been updated successfully");
+            })
+            .catch((error) => {
+              console.log(error);
+              // document.getElementById("productForm").reset();
+            });
+        }
+        function cancelFunction(docId) {
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "orders", docId);
+
+          const data = {
+            orderStatus: "Cancelled",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+          addDoc(collection(database, "log"), {
+            comment: "Order status has been updated to cancelled.",
+
+            timestamp: serverTimestamp(),
+          })
+            .then((docRef) => {
+              console.log("Product has been updated successfully");
+            })
+            .catch((error) => {
+              console.log(error);
+              // document.getElementById("productForm").reset();
+            });
+        }
+        function rejectFunction(docId) {
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "orders", docId);
+
+          const data = {
+            orderStatus: "Rejected",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+          addDoc(collection(database, "log"), {
+            comment: "Order status has been update to rejected.",
+
+            timestamp: serverTimestamp(),
+          })
+            .then((docRef) => {
+              console.log("Product has been updated successfully");
+            })
+            .catch((error) => {
+              console.log(error);
+              // document.getElementById("productForm").reset();
+            });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    //get today's registered customer
+    async function getTodayOrder() {
+      try {
+
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        const q = query(collection(database, "orders"), where("timestamp", ">=", start), where("timestamp", "<", end));
+        await
+          onSnapshot(q, (querySnapshot) => {
+            const todaysRegCount = querySnapshot.size;
+            document.getElementById('todaysOrders').innerHTML = todaysRegCount
+
+          });
+
+
+
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
     //get notifications
     async function getNotifications() {
       try {
@@ -924,8 +1178,10 @@
               document.getElementById('notSpan').style.visibility = "visible";
               document.getElementById('count').innerHTML = notificationCount
               document.getElementById('notCount').innerHTML = notificationCount;
+              document.getElementById('notificationDropdown').classList.add("count-indicator");
             } else {
               document.getElementById('notSpan').style.visibility = "hidden";
+              document.getElementById('notificationDropdown').classList.remove("count-indicator");
             }
 
 
@@ -937,7 +1193,12 @@
               // Create a new anchor element for the notification
               const notificationLink = document.createElement('a');
               notificationLink.classList.add('dropdown-item', 'preview-item');
-              notificationLink.setAttribute('href', './pages/bookings/booking-page.html');
+              if (notification.type == "service") {
+                notificationLink.setAttribute('href', './pages/bookings/booking-page.html');
+              } else {
+                notificationLink.setAttribute('href', './pages/orders/orders.html');
+              }
+
 
 
               // Create the preview-thumbnail element
@@ -1219,6 +1480,8 @@
     }
 
 
+
+
     // signout user
 
 
@@ -1253,11 +1516,13 @@
     window.onload = function () {
       // call both functions
       getBooking();
+      getOrders();
       getCustomer();
       getProducts();
       getTodayBookings();
       getTodayRegCustomer();
       getTodayaddedProduct();
+      getTodayOrder();
       getNotifications();
     };
 

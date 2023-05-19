@@ -12,6 +12,7 @@ import {
   orderBy,
   writeBatch,
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -34,8 +35,9 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize  Database and get a reference to the service
 const database = getFirestore(app);
-
-const colRef = collection(database, "bookings");
+ // Initialize Firebase Authentication and get a reference to the service
+ const auth = getAuth(app);
+const colRef = collection(database, "orders");
 // const notRef = collection(database, "orderNotification");
 
 
@@ -66,10 +68,24 @@ const colRef = collection(database, "bookings");
   }
   
 
-async function getBooking() {
+async function getOrders() {
 
   const currentYear = new Date().getFullYear();
   document.getElementById("currentYear").textContent = currentYear;
+
+   //check if user is logged in or not
+   onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      const uid = user.uid;
+      // ...
+    } else {
+      // User is signed out
+      // ...
+      window.location.href = "login.html";
+    }
+  });
   let tableRow = document.getElementById("bookingTable");
   const loader = document.getElementById("loader");
   // show the loader initially
@@ -89,39 +105,48 @@ async function getBooking() {
       docsSnap.forEach((doc) => {
         index++;
         let data = doc.data();
+
+      
         let row = `<tr>
               <td>${index}</td>
               <td>${data.orderId}</td>
-              <td>${data.name}</td>
+              <td>${data.customerName}</td>
               <td>
-                <div>${data.service}</div>
+                <div>${data.customerPhone}</div>
               </td>
-              <td>${data.phone}</td>
-              <td>${data.email}</td>
-              <td>${data.bookdate} ${data.booktime}</td>
+              <td>${data.customerEmail}</td>
+              <td>${data.productName}</td>
+              <td>${data.productQuantity}</td>
+              <td>${data.productPrice}</td>
+              <td id="instruction">${data.instructions}</td>
               <td>${data.sourceType}</td>
-              <td id="instruction">${data.instruction}</td>
+            
+              <td>${data.paymentStatus}</td>
+
+              
               <td>
-                <label class="badge ${
-                  data.status == "Pending"
-                    ? "badge-warning"
-                    : data.status == "Accepted"
-                    ? "badge-success"
-                    : data.status == "Cancelled"
-                    ? "badge-primary"
-                    : data.status == "Completed"
-                    ? "badge-dark"
-                    : "badge-danger"
-                }" id="statusLabel"
-                  >${data.status}</label
-                >
-              </td>
+              <label class="badge ${
+                data.orderStatus == "Accepted"
+                  ? "badge-info"
+                  : data.orderStatus == "Cancelled"
+                  ? "badge-danger"
+                  : data.orderStatus == "Completed"
+                  ? "badge-dark"
+                  : "badge-success"
+              }" id="statusLabel"
+                >${data.orderStatus}</label
+              >
+              
+       </td>
+              
+          
+            
              
               <td>
                 <i
                   class="icon-ellipsis"
                   id="dropdownMenuSplitButton1" data-toggle="${
-                    data.status == "Completed"||data.status == "Cancelled" ? "" : "dropdown"
+                    data.orderStatus == "Completed"||data.orderStatus == "Cancelled" ? "" : "dropdown"
                   }" aria-haspopup="true" aria-expanded="false"
                 ></i>
                 <div
@@ -138,9 +163,7 @@ async function getBooking() {
                   <a class="dropdown-item cancel-action" data-docid="${
                     doc.id
                   }">Cancel</a>
-                  <a class="dropdown-item reject-action" data-docid="${
-                    doc.id
-                  }">Reject</a>
+
                 
                 </div>
               </td>
@@ -192,10 +215,10 @@ async function getBooking() {
       // Execute your accept function here with the docId parameter
       console.log("Accept function executed for docId", docId);
 
-      const docRef = doc(database, "bookings", docId);
+      const docRef = doc(database, "orders", docId);
 
       const data = {
-        status: "Accepted",
+        orderStatus: "Accepted",
       };
       updateDoc(docRef, data)
         .then((docRef) => {
@@ -224,10 +247,10 @@ async function getBooking() {
     function completeFunction(docId) {
       // Execute your complete function here with the docId parameter
       console.log("Complete function executed for docId", docId);
-      const docRef = doc(database, "bookings", docId);
+      const docRef = doc(database, "orders", docId);
 
       const data = {
-        status: "Completed",
+        orderStatus: "Completed",
       };
       updateDoc(docRef, data)
         .then((docRef) => {
@@ -240,12 +263,12 @@ async function getBooking() {
         });
 
       addDoc(collection(database, "log"), {
-        comment: "Booking status has been update to completed.",
+        comment: "order status has been update to completed.",
 
         timestamp: serverTimestamp(),
       })
         .then((docRef) => {
-          console.log("Product has been updated successfully");
+          console.log("Order has been updated successfully");
         })
         .catch((error) => {
           console.log(error);
@@ -255,10 +278,10 @@ async function getBooking() {
     function cancelFunction(docId) {
       // Execute your complete function here with the docId parameter
       console.log("Complete function executed for docId", docId);
-      const docRef = doc(database, "bookings", docId);
+      const docRef = doc(database, "orders", docId);
 
       const data = {
-        status: "Cancelled",
+        orderStatus: "Cancelled",
       };
       updateDoc(docRef, data)
         .then((docRef) => {
@@ -271,7 +294,7 @@ async function getBooking() {
         });
 
       addDoc(collection(database, "log"), {
-        comment: "Booking status has been updated to cancelled.",
+        comment: "Order status has been updated to cancelled.",
 
         timestamp: serverTimestamp(),
       })
@@ -286,10 +309,10 @@ async function getBooking() {
     function rejectFunction(docId) {
       // Execute your complete function here with the docId parameter
       console.log("Complete function executed for docId", docId);
-      const docRef = doc(database, "bookings", docId);
+      const docRef = doc(database, "orders", docId);
 
       const data = {
-        status: "Rejected",
+        orderStatus: "Rejected",
       };
       updateDoc(docRef, data)
         .then((docRef) => {
@@ -302,7 +325,7 @@ async function getBooking() {
         });
 
       addDoc(collection(database, "log"), {
-        comment: "Booking status has been update to rejected.",
+        comment: "Order status has been update to rejected.",
 
         timestamp: serverTimestamp(),
       })
@@ -321,6 +344,6 @@ async function getBooking() {
 
 window.onload = function () {
   // call both functions
-  getBooking();
- updateNotificationStatus();
+  getOrders();
+  updateNotificationStatus();
 }; 

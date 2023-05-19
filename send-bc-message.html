@@ -7,20 +7,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Bnb Admin / Send Broadcast Message</title>
   <!-- plugins:css -->
-  <link rel="stylesheet" href="../../vendors/feather/feather.css" />
+  <link rel="stylesheet" href="./vendors/feather/feather.css" />
 
-  <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css" />
-  <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css" />
+  <link rel="stylesheet" href="./vendors/ti-icons/css/themify-icons.css" />
+  <link rel="stylesheet" href="./vendors/css/vendor.bundle.base.css" />
   <!-- endinject -->
   <!-- Plugin css for this page -->
-  <link rel="stylesheet" href="../../vendors/select2/select2.min.css" />
-  <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css" />
+  <link rel="stylesheet" href="./vendors/select2/select2.min.css" />
+  <link rel="stylesheet" href="./vendors/select2-bootstrap-theme/select2-bootstrap.min.css" />
   <!-- End plugin css for this page -->
   <!-- inject:css -->
-  <link rel="stylesheet" href="../../css/vertical-layout-light/style.css" />
+  <link rel="stylesheet" href="./css/vertical-layout-light/style.css" />
   <!-- endinject -->
-  <link rel="shortcut icon" href="../../images/favicon.png" />
-  <link rel="stylesheet" href="../../css/alert-style.css" />
+  <link rel="shortcut icon" href="./images/favicon.ico" />
+  <link rel="stylesheet" href="./css/alert-style.css" />
   <style>
     #loader {
       display: none;
@@ -78,10 +78,9 @@
     <!-- partial:../../partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img src="../../images/logo.png" class="mr-2"
+        <a class="navbar-brand brand-logo mr-5" href="./index.html"><img src="./images/logo.png" class="mr-2"
             alt="logo" /></a>
-        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo-mini.svg"
-            alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="./index.html"><img src="./images/logo-mini.svg" alt="logo" /></a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -112,64 +111,23 @@
               <p class="mb-0 font-weight-normal float-left dropdown-header">
                 Notifications
               </p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-success">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">
-                    Application Error
-                  </h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    Just now
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-settings mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">Settings</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    Private message
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-info">
-                    <i class="ti-user mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">
-                    New user registration
-                  </h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    2 days ago
-                  </p>
-                </div>
-              </a>
+
+
             </div>
           </li>
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-              <img src="../../images/faces/face28.jpg" alt="profile" />
+              <img src="./images/faces/face28.jpg" alt="profile" />
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-            
+
               <a class="dropdown-item">
                 <i class="ti-power-off text-primary"></i>
                 Logout
               </a>
             </div>
           </li>
-         
+
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
           data-toggle="offcanvas">
@@ -179,22 +137,32 @@
     </nav>
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-    
-   
-      <!-- partial:../../partials/_sidebar.html -->
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
+
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar  sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link" href="./index.html">
+            <a class="nav-link" href="index.html">
               <i class="icon-grid menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./pages/bookings/booking-page.html">
-              <i class="icon-grid-2 menu-icon"></i>
+            <a class="nav-link" href="pages/bookings/booking-page.html">
+              <i class="icon-paper menu-icon"></i>
               <span class="menu-title">Bookings</span>
+
             </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/orders/orders.html">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Orders</span>
+
+            </a>
+
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
@@ -205,7 +173,7 @@
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item">
-                  <a class="nav-link" href="./pages/inventory/dashboard.html">Stock</a>
+                  <a class="nav-link" href="./pages/inventory/viewstock-dashboard.html">View Stock</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="./pages/inventory/add-item.html">Add Stock</a>
@@ -213,31 +181,56 @@
                 <li class="nav-item">
                   <a class="nav-link" href="./pages/inventory/update-stock.html">Update Stock</a>
                 </li>
-               
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
               </ul>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./pages/customers/registered-customers.html">
+            <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-contract menu-icon"></i>
+              <span class="menu-title">Services</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-service">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/service/service-dashboard.html">View Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/service/add-service.html">Add Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/service/update-service.html">Update Service</a>
+                </li>
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/customers/registered-customers.html">
               <i class="icon-head menu-icon"></i>
               <span class="menu-title">Customers</span>
+
             </a>
+
           </li>
-              <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
               aria-controls="ui-basic">
-              <i class="icon-paper menu-icon"></i>
+              <i class="icon-columns menu-icon"></i>
               <span class="menu-title">Message</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-message">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="#">View messages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="./pages/message/view_messages.html">View messages</a></li>
                 <li class="nav-item"> <a class="nav-link" href="./send-bc-message.html">Send Message</a></li>
 
               </ul>
             </div>
           </li>
+        
         </ul>
       </nav>
       <!-- partial -->
@@ -252,17 +245,19 @@
 
 
                   </p>
-                  <form class="" method="post" id="messageForm">
+                  <form class="forms-sample" method="post" id="messageForm">
 
                     <div class="form-group">
-                      <label for="messageSubject">Subject</label>
-                      <input type="text" class="form-control" id="messageSubject" placeholder="Subject...." />
+                      <label for="messageSubject">Subject <span style="font-size: 12px;color: #ccc;">(Required
+                          *)</span></label>
+                      <input type="text" class="form-control" required id="messageSubject" placeholder="Subject...." />
                     </div>
 
 
                     <div class="form-group">
-                      <label for="messageContent">Message Content</label>
-                      <textarea class="form-control" id="messageContent" rows="6"
+                      <label for="messageContent">Message Content <span style="font-size: 12px;color: #ccc;">(Required
+                          *)</label>
+                      <textarea class="form-control" id="messageContent" required rows="6"
                         placeholder="Type here....."></textarea>
                     </div>
 
@@ -312,7 +307,7 @@
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
-             <footer class="footer">
+        <footer class="footer">
           <div class="d-sm-flex justify-content-center justify-content-sm-between">
             <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
                 id="currentYear"></span>.
@@ -328,24 +323,28 @@
   </div>
   <!-- container-scroller -->
   <!-- plugins:js -->
-  <script src="../../vendors/js/vendor.bundle.base.js"></script>
+  <script src="./vendors/js/vendor.bundle.base.js"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->
-  <script src="../../vendors/typeahead.js/typeahead.bundle.min.js"></script>
-  <script src="../../vendors/select2/select2.min.js"></script>
+  <script src="./vendors/typeahead.js/typeahead.bundle.min.js"></script>
+  <script src="./vendors/select2/select2.min.js"></script>
   <!-- End plugin js for this page -->
   <!-- inject:js -->
-  <script src="../../js/off-canvas.js"></script>
-  <script src="../../js/hoverable-collapse.js"></script>
-  <script src="../../js/template.js"></script>
-  <script src="../../js/settings.js"></script>
-  <script src="../../js/todolist.js"></script>
+  <script src="./js/off-canvas.js"></script>
+  <script src="./js/hoverable-collapse.js"></script>
+  <script src="./js/template.js"></script>
+  <script src="./js/settings.js"></script>
+  <script src="./js/todolist.js"></script>
   <!-- endinject -->
   <!-- Custom js for this page-->
-  <script src="../../js/file-upload.js"></script>
-  <script src="../../js/typeahead.js"></script>
-  <script src="../../js/select2.js"></script>
-  <script src="../../js/alert-file.js"></script>
+  <script src="./js/file-upload.js"></script>
+  <script src="./js/typeahead.js"></script>
+  <script src="./js/select2.js"></script>
+  <script src="./js/alert-file.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
   <!-- End custom js for this page-->
   <script type="module">
 
@@ -362,6 +361,7 @@
       addDoc,
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -384,12 +384,28 @@
 
     // Initialize  Database and get a reference to the service
     const database = getFirestore(app);
-
+    // Initialize Firebase Authentication and get a reference to the service
+    const auth = getAuth(app);
     const colRef = collection(database, "users");
 
+
+
     async function getCustomer() {
-       const currentYear = new Date().getFullYear();
+      const currentYear = new Date().getFullYear();
       document.getElementById("currentYear").textContent = currentYear;
+
+      //check if user is logged in or not
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+          const uid = user.uid;       // ...
+        } else {
+          // User is signed out
+          // ...
+          window.location.href = "login.html";
+        }
+      });
       let tableRow = document.getElementById("customerTable");
       const loader = document.getElementById("loader");
       // show the loader initially
@@ -399,7 +415,6 @@
         const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
         return date.toLocaleString();
       }
-
 
       try {
         //  const docsSnap = await getDocs(colRef);
@@ -418,12 +433,7 @@
               <td>
                 <div>${data.email}</div>
               </td>
-              <td>${data.phoneNo}</td>
-            
-            
-              
-             
-             
+              <td>${data.phoneNo}</td>           
             </tr>`;
 
             rows += row;
@@ -444,7 +454,9 @@
 
           // Add an event listener to each customer checkbox
           checkboxes.forEach(function (checkbox) {
-            checkbox.addEventListener("click", function () {
+            checkbox.addEventListener("click", function (e) {
+              // Stop event propagation
+              e.stopPropagation();
               // Uncheck the "Select All" checkbox if any customer checkbox is unchecked
               if (!this.checked) {
                 selectAll.checked = false;
@@ -457,13 +469,31 @@
           });
 
 
-
           // Add an event listener to the "Send" button
           var sendButton = document.getElementById("sendMessageBtn");
-          var selectedCustomers = [];
-          sendButton.addEventListener("click", function () {
-            // Collect the selected customer information
-          
+          sendButton.addEventListener("click", function (e) {
+            e.preventDefault(); // Prevent the default form submission behavior
+
+            // Collect the form input values
+            var subject = document.getElementById("messageSubject").value;
+            var message = document.getElementById("messageContent").value;
+            var optLink = document.getElementById("optionalLink").value;
+
+
+            if (subject.trim() === "" || message.trim() === "") {
+              alert("Please fill in all required fields.");
+              return; // Stop further execution
+            }
+
+            var smsContent = subject + "\n\n" + message;
+            if (optLink) {
+              smsContent += "\n\n" + optLink;
+            }
+
+
+            var selectedCustomers = [];
+            var checkboxes = document.querySelectorAll(".customer-checkbox");
+
             checkboxes.forEach(function (checkbox) {
               if (checkbox.checked) {
                 var row = checkbox.closest("tr");
@@ -476,75 +506,124 @@
                   email: email,
                   phone: phone,
                 });
-
               }
             });
+
+            // Send the message to the selected customers
+            if (selectedCustomers.length > 0) {
+              selectedCustomers.forEach(function (customer) {
+                sendButton.innerHTML = '<span class="spinner"></span> Sending...';
+
+                sendSMS(customer.phone, smsContent, optLink, customer.name, customer.email,subject);
+                // sendMessage(subject, message, optLink, customer.name, customer.email, customer.phone);
+              });
+
+              // Clean the array after processing all customers
+              selectedCustomers = [];
+            } else {
+              sendButton.innerHTML = "Submit";
+              alert("Please select at least one recipient.");
+            }
           });
 
+          // Function to send an SMS message using Termii API
+          async function sendSMS(recipientPhoneNumber,message,optLink, name, email,subject ) {
+            // Set your Termii API key and sender ID
+            const TERMII_API_KEY = 'TLXnn6CfF9iCwj4uzWXFL84AGqo7w8UT6ga4mqND139VrYCy7D7QOuuHY7mY22';
+            const TERMII_SENDER_ID = 'LeekoTech';
 
-          // Send the message to the selected customers
-          if (selectedCustomers.length > 0) {
-            // You can use an appropriate backend service (e.g., a mail server, a messaging API) to send the message.
-            // Here, we'll just log the selected customer information to the console.
-            console.log("Selected customers:", selectedCustomers);
-            // Clear the form fields and close the modal
-         const subj=   document.getElementById("messageSubject").value ;
-        const messageBody =    document.getElementById("messageContent").value ;
-        const optLink =    document.getElementById("optionalLink").value ;
-        
-            for (let i = 1; index < selectedCustomers.length; i++){
-              console.log(">>>>>>>>>"+selectedCustomers);
-              sendMessga(subj,messageBody,optLink,selectedCustomers[i].name,selectedCustomers[i].email,selectedCustomers[i].phone);            
+            try {
+              const response = await axios.post('https://api.ng.termii.com/api/sms/send', {
+                to: recipientPhoneNumber,
+                from: TERMII_SENDER_ID,
+                sms: message,
+                type: 'plain',
+                channel: 'generic',
+                api_key: TERMII_API_KEY,
+              });
+              sendMessage(recipientPhoneNumber, message, optLink, name, email,subject );
+              console.log('SMS sent successfully:', response.data);
+            } catch (error) {
+              console.error('Failed to send SMS:', error.response.data);
             }
           }
 
+          async function sendMessage(recipientPhone, message, optlink, recipientName, recipientEmail,subject ) {
+            try {
+              await addDoc(collection(database, "messages"), {
+                subject: subject,
+                message: message,
+                optionalLink: optlink,
+                recipientName: recipientName,
+                recipientEmail: recipientEmail,
+                recipientPhone: recipientPhone,
+                timestamp: serverTimestamp()
+              });
+
+              createAlert(
+                "",
+                "Success!",
+                "Message was sent successfully",
+                "success",
+                true,
+                true,
+                "pageMessages"
+              );
+
+              console.log("Message has been added to the database successfully");
+
+              // Clear the form fields and close the modal
+              document.getElementById("messageSubject").value = "";
+              document.getElementById("messageContent").value = "";
+              document.getElementById("optionalLink").value = "";
+              sendButton.innerHTML = "Submit";
+              document.getElementById("messageForm").reset();
+              createLog(recipientName);
+
+            } catch (error) {
+              createAlert(
+                "Opps!",
+                "Something went wrong",
+                error + "",
+                "danger",
+                true,
+                false,
+                "pageMessages"
+              );
+              console.log("Error adding the message to the database:", error);
+              sendButton.innerHTML = "Submit";
+            }
+          }
+          async function createLog(recipientName) {
+            try {
+
+              await addDoc(collection(database, "log"), {
+                comment: "a message was sent to " + recipientName,
+
+                timestamp: serverTimestamp(),
+              })
+                .then((docRef) => {
+                  console.log("Log created successfully");
+                })
+                .catch((error) => {
+                  console.log(error);
+
+                });
+
+            } catch (error) {
+              console.log("Error adding the message to the database:", error);
+              sendButton.innerHTML = "Submit";
+            }
+          }
+
+
         });
-
-        async function sendMessga(subject, message, optlink, RecipientName, RecipientEmail, RecipientPhone) {
-
-
-          await  addDoc(collection(database, "messages"), {
-            subject: subject,
-            message: message,
-            optionalLink: optlink,
-            recipientName: RecipientName,
-            recipientEmail: RecipientEmail,
-            recipientPhone: RecipientPhone,
-            
-            timestamp: serverTimestamp()
-          }).then(docRef => {
-
-            console.log("message has been added to db successfully");
-
-
-          }).catch(error => {
-
-            console.log(error);
-            // document.getElementById("productForm").reset();
-          });
-          await    addDoc(collection(database, "log"), {
-            comment: message + " was sent to " + RecipientName,
-
-            timestamp: serverTimestamp()
-          }).then(docRef => {
-
-            console.log("a message was sent successfully");
-
-
-          }).catch(error => {
-
-            console.log(error);
-            // document.getElementById("productForm").reset();
-          });
-        }
-
-
-
-
       } catch (error) {
         console.log(error);
       }
     }
+
+    // Get the "Select All" checkbox and all customer checkboxes
 
     window.onload = getCustomer;
 

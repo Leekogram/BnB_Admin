@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Bnb Admin / Inventory</title>
+    <title>Bnb Admin / Update Service</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="../../vendors/feather/feather.css" />
 
@@ -165,14 +165,14 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
-
+                          
                             <a class="dropdown-item">
                                 <i class="ti-power-off text-primary"></i>
                                 Logout
                             </a>
                         </div>
                     </li>
-
+                   
                 </ul>
                 <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
                     data-toggle="offcanvas">
@@ -182,8 +182,9 @@
         </nav>
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-
+          
            <!-- partial -->
+        <!-- partial -->
         <!-- partial:../../partials/_sidebar.html -->
         <nav class="sidebar  sidebar-offcanvas" id="sidebar">
             <ul class="nav">
@@ -218,13 +219,13 @@
                 <div class="collapse" id="ui-basic">
                   <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                      <a class="nav-link" href="./viewstock-dashboard.html">View Stock</a>
+                      <a class="nav-link" href="../inventory/viewstock-dashboard.html">View Stock</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="./add-item.html">Add Stock</a>
+                      <a class="nav-link" href="../inventory/add-item.html">Add Stock</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="./update-stock.html">Update Stock</a>
+                      <a class="nav-link" href="../inventory/update-stock.html">Update Stock</a>
                     </li>
                     <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                   </ul>
@@ -240,13 +241,13 @@
                 <div class="collapse" id="ui-service">
                   <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                      <a class="nav-link" href="../service/service-dashboard.html">View Services</a>
+                      <a class="nav-link" href="./service-dashboard.html">View Services</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="../service/add-service.html">Add Services</a>
+                      <a class="nav-link" href="./add-service.html">Add Services</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="../service/update-service.html">Update Service</a>
+                      <a class="nav-link" href="./update-service.html">Update Service</a>
                     </li>
                     <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                   </ul>
@@ -303,12 +304,13 @@
                                                 <tr>
                                                     <th>S/N</th>
 
-                                                    <th>Product Image</th>
-                                                    <th>Product name</th>
-                                                    <th>Product Description</th>
-                                                    <th>Product Price</th>
-                                                    <th>Unit</th>
-                                                    <th>Status</th>
+                                                    <th>Service Image</th>
+                                                    <th>Service name</th>
+                                                    <th>Service Description</th>
+                                                    <th>Service Price</th>
+                                                    <th>Duration</th>
+                                                    <th>Section</th>
+                          
 
 
                                                     <th></th>
@@ -329,14 +331,14 @@
                 </div>
                 <!-- content-wrapper ends -->
                 <!-- partial:../../partials/_footer.html -->
-                <footer class="footer">
-                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
-                                id="currentYear"></span>.
-                            All rights reserved.</span>
-
-                    </div>
-                </footer>
+                 <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
+                  id="currentYear"></span>.
+                All rights reserved.</span>
+  
+            </div>
+          </footer>
                 <!-- partial -->
             </div>
             <!-- main-panel ends -->
@@ -376,9 +378,8 @@
             getDocs,
             onSnapshot,
             updateDoc,
-            addDoc, serverTimestamp, query, orderBy
+            addDoc, serverTimestamp,query,orderBy
         } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -398,25 +399,15 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
- // Initialize Firebase Authentication and get a reference to the service
- const auth = getAuth(app);
+
         // Initialize  Database and get a reference to the service
         const database = getFirestore(app);
 
-        const colRef = collection(database, "products");
+        const colRef = collection(database, "service");
 
         async function getBooking() {
             const currentYear = new Date().getFullYear();
-            document.getElementById("currentYear").textContent = currentYear;
-
-             //check if user is logged in or not
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const uid = user.uid;
-        } else {    
-          window.location.href = "login.html";
-        }
-      });
+document.getElementById("currentYear").textContent = currentYear;
             let tableRow = document.getElementById("stockTable");
             const loader = document.getElementById("loader");
             // show the loader initially
@@ -434,35 +425,20 @@
                         let data = doc.data();
                         let row = `<tr>
               <td>${index}</td>
-              <td><img src="${data.productPicture}"  style="border-radius:0px;width:50px;heigth:50px"/></td>
-              <td><input type="text" id="nameInput"   value="${data.productName}"  /></td>
+              <td><img src="${data.servicePicture}"  style="border-radius:0px;width:50px;heigth:50px"/></td>
+              <td><input type="text" id="nameInput"   value="${data.serviceName}"  /></td>
               <td>
-                <input type="text" id="descripInput"   value="${data.productDesc}"  />
+                <input type="text" id="descripInput"   value="${data.serviceDes}"  />
              
               </td>
               <td>
                
-                <input type="number" id="priceInput"   value="${data.productPrice}"  />
+                <input type="number" id="priceInput"   value="${data.servicePrice}"  />
                 </td>
-              <td>  <input type="number" id="qtyInput"   value="${data.productQty}"  min="1" /></td>
+              <td>  <input type="text" id="durationInput"   value="${data.serviceDuration}"  min="1" /></td>
               
               <td>
-                <label class="badge ${data.productQty == 0
-                                ? "badge-secondary"
-                                : data.productQty <= 2
-                                    ? "badge-warning"
-                                    : data.productQty >= 3
-                                        ? "badge-success" : "badge-dart"
-
-                            }" id="statusLabel"
-                  >${data.productQty == 0
-                                ? "Not available"
-                                : data.productQty <= 2
-                                    ? "Low in stock"
-                                    : data.productQty >= 3
-                                        ? "Available"
-                                        : "Not available"}</label
-                >
+                <input type="text" id="catInput"   value="${data.serviceCat}"  />
               </td>
              
               <td>
@@ -502,15 +478,17 @@
                             const nameField = row.querySelector("input#nameInput"); // get the <input> element within the row
                             const descField = row.querySelector("input#descripInput"); // get the <input> element within the row
                             const priceField = row.querySelector("input#priceInput"); // get the <input> element within the row
-                            const qtyField = row.querySelector("input#qtyInput"); // get the <input> element within the row
+                            const durationField = row.querySelector("input#durationInput"); // get the <input> element within the row
+                            const catField = row.querySelector("input#catInput"); // get the <input> element within the row
 
 
 
                             const nameValue = nameField.value;
                             const descValue = descField.value;
                             const priceValue = priceField.value;
-                            const qtyValue = qtyField.value;
-                            updateFunction(docId, nameValue, descValue, priceValue, qtyValue);
+                            const durationValue = durationField.value;
+                            const catValue = catField.value;
+                            updateFunction(docId, nameValue, descValue, priceValue, durationValue,catValue);
                         });
                     });
 
@@ -542,17 +520,18 @@
                     });
                 });
 
-                function updateFunction(docId, name, desc, price, Qty) {
+                function updateFunction(docId, name, desc, price, serviceduration,cat) {
                     // Execute your accept function here with the docId parameter
                     console.log("Update function executed for docId", docId);
 
-                    const docRef = doc(database, "products", docId);
+                    const docRef = doc(database, "service", docId);
 
                     const data = {
-                        productName: name,
-                        productPrice: price,
-                        productQty: Qty,
-                        productDesc: desc,
+                        serviceName: name,
+                        servicePrice: price,
+                        serviceCat: cat,
+                        serviceDes: desc,
+                        serviceDuration: serviceduration,
 
                     };
                     updateDoc(docRef, data)
@@ -567,12 +546,12 @@
 
 
                     addDoc(collection(database, "log"), {
-                        comment: "Updated " + name,
+                        comment: "Updated "+name,
 
                         timestamp: serverTimestamp()
                     }).then(docRef => {
 
-                        console.log("Product has been updated successfully");
+                        console.log("Service has been updated successfully");
 
 
                     }).catch(error => {

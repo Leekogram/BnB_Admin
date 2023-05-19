@@ -7,7 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title>Bnb Admin / Add item</title>
+    <title>Bnb Admin / Add Service</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="../../vendors/feather/feather.css" />
 
@@ -185,6 +185,7 @@
        
     
         <!-- partial -->
+        <!-- partial -->
         <!-- partial:../../partials/_sidebar.html -->
         <nav class="sidebar  sidebar-offcanvas" id="sidebar">
           <ul class="nav">
@@ -219,13 +220,13 @@
               <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="./viewstock-dashboard.html">View Stock</a>
+                    <a class="nav-link" href="../inventory/viewstock-dashboard.html">View Stock</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="./add-item.html">Add Stock</a>
+                    <a class="nav-link" href="../inventory/add-item.html">Add Stock</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="./update-stock.html">Update Stock</a>
+                    <a class="nav-link" href="../inventory/update-stock.html">Update Stock</a>
                   </li>
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
@@ -241,13 +242,13 @@
               <div class="collapse" id="ui-service">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="../service/service-dashboard.html">View Services</a>
+                    <a class="nav-link" href="./service-dashboard.html">View Services</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="../service/add-service.html">Add Services</a>
+                    <a class="nav-link" href="./add-service.html">Add Services</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="../service/update-service.html">Update Service</a>
+                    <a class="nav-link" href="./update-service.html">Update Service</a>
                   </li>
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
@@ -290,7 +291,7 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
+<!--               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Add a Product</h4>
@@ -299,7 +300,7 @@
                       <div class="form-group">
                         <div class="image-preview-container">
                           <img id="imagePreview" class="image-preview" style="height: 10%;">
-                        </div>
+                        </div> 
                         
                         <label>
                           Product image</label>
@@ -327,7 +328,7 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="productTitle">Product Title</label>
+                      <label for="serviceName">Service Name</label>
                         <input
                           type="text"
                           class="form-control"
@@ -336,15 +337,21 @@
                           placeholder="Naturale beauty cream"
                           required
                         />
-
+                        
                         <div id="matchingValuesContainer"></div>
                       </div>
                       <div class="form-group">
-                        <label for="productCat">Product Category</label>
-                        <select class="form-control" id="productCat" required   >
-                          <option value="beautyProduct">Beauty Product</option>
-                          <option value="fashionProduct">Fashion Product</option>
-                        </select>
+                        <label for="productTitle">Product Title</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          autocomplete="off"
+                          id="productDuration"
+                          placeholder="2 Hours"
+                          required
+                        />
+                        
+                   
                       </div>
                       <div class="form-group">
                         <label for="productPrice">Product Price</label>
@@ -366,17 +373,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="form-group">
-                        <label for="productQuantiy">Product Qauntity</label>
-                        <input
-                          type="number"
-                          class="form-control"
-                          id="productQuantiy"
-                          placeholder="100"
-                          min="1"
-                          required
-                        />
-                      </div>
+                    
                       <div class="form-group">
                         <label for="productDescription"
                           >Product Description</label
@@ -396,20 +393,24 @@
                     </form>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
-          <!--     <div class="col-md-6 grid-margin">
+              <div class="col-md-6 grid-margin">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Add a Service</h4>
                     <p class="card-description">Fill in appropriately</p>
-                    <form class="forms-sample">
+                    <form class="forms-sample" id="serviceForm">
                        <div class="form-group">
+                        <div class="image-preview-container">
+                          <img id="imagePreview" class="image-preview" style="height: 10%;">
+                        </div>
                         <label>Service Image</label>
                         <input
                           type="file"
                           name="img[]"
                           class="file-upload-default"
+                          id="service-image"
                         />
                         <div class="input-group col-xs-12">
                           <input
@@ -434,9 +435,11 @@
                         <input
                           type="text"
                           class="form-control"
-                          id="sectionName"
+                          id="serviceName"
                           placeholder="HairStyling"
+                          required
                         />
+                        <div id="matchingValuesContainer"></div>
                       </div>
                       <div class="form-group">
                         <label for="servicePrice">Service Price</label>
@@ -451,6 +454,7 @@
                             class="form-control"
                             id="servicePrice"
                             aria-label="Amount (to the nearest naira)"
+                            required
                           />
                           <div class="input-group-append">
                             <span class="input-group-text">.00</span>
@@ -460,7 +464,7 @@
                       <div class="form-group">
                         <label for="serviceCategory">Section Category</label>
                         <div class="input-group">
-                          <select class="form-control">
+                          <select class="form-control"  id="serviceCat" required>
                             <option>Braid</option>
                             <option>Dreadlocks</option>
                             <option>HairStyling</option>
@@ -480,6 +484,7 @@
                           class="form-control"
                           id="serviceDuration"
                           placeholder="12:00 Mins"
+                          required
                         />
                       </div>
                       <div class="form-group">
@@ -490,17 +495,18 @@
                           class="form-control"
                           id="serviceDescription"
                           rows="4"
+                          required
                         ></textarea>
                       </div>
-
-                      <button type="submit" class="btn btn-primary mr-2">
+                      <p class="text-danger" id="productExist">Service already exist in Services, please update it in <a href="./update-service.html">Update Service</a></p>
+                      <button type="submit" class="btn btn-primary mr-1" id="addProductBtn">
                         Submit
                       </button>
-                      <button class="btn btn-light" type="reset">Reset</button>
+                      <button class="btn btn-light" type="reset" id="resetBtn">Reset</button>
                     </form>
                   </div>
                 </div>
-              </div> -->
+              </div> 
 
            <!--    <div class="col-md-6 grid-margin">
                 <div class="card">
@@ -602,7 +608,7 @@
     <script src="../../js/select2.js"></script>
     <script src="../../js/alert-file.js"></script>
     <!-- End custom js for this page-->
-    <script src="../../js/firebase/manage_inventory.js" type="module"></script>
+    <script src="../../js/firebase/manage_service.js" type="module"></script>
     
   </body>
 </html>

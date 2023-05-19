@@ -9,6 +9,7 @@ import {
   updateDoc,
   orderBy
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,6 +29,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// Initialize Firebase Authentication and get a reference to the service
+const auth = getAuth(app);
 
 // Initialize  Database and get a reference to the service
 const database = getFirestore(app);
@@ -37,6 +40,14 @@ const colRef = collection(database, "users");
 async function getCustomer() {
   const currentYear = new Date().getFullYear();
   document.getElementById("currentYear").textContent = currentYear;
+  //check if user is logged in or not
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const uid = user.uid;
+    } else {
+      window.location.href = "login.html";
+    }
+  });
   let tableRow = document.getElementById("customerTable");
   const loader = document.getElementById("loader");
   // show the loader initially
@@ -46,7 +57,7 @@ async function getCustomer() {
     const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
     return date.toLocaleString();
   }
-  
+
 
   try {
     const q = query(colRef, orderBy("createdDateTime", "desc"));

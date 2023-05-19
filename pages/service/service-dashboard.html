@@ -5,18 +5,22 @@
   <!-- Required meta tags -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>BnB Admin/Customers</title>
+  <title>Bnb Admin / Service</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../../vendors/feather/feather.css" />
+
   <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css" />
   <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css" />
   <!-- endinject -->
   <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="../../vendors/select2/select2.min.css" />
+  <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css" />
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="../../css/vertical-layout-light/style.css" />
   <!-- endinject -->
   <link rel="shortcut icon" href="../../images/favicon.ico" />
+  <link rel="stylesheet" href="../../css/alert-style.css" />
   <style>
     #loader {
       display: none;
@@ -42,12 +46,33 @@
       animation: spin 1s linear infinite;
     }
 
+    input[type="text"],
+    input[type="number"] {
+      float: right;
+      width: 200px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    input[type="text"],
+    input[type="number"]:focus {
+      outline: none;
+      /* border-color: #FFC100; */
+    }
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
       }
     }
   </style>
+
 </head>
 
 <body>
@@ -57,7 +82,7 @@
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
         <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img src="../../images/logo.png" class="mr-2"
             alt="logo" /></a>
-        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo.png"
+        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo-mini.svg"
             alt="logo" /></a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -139,7 +164,7 @@
               <img src="../../images/faces/face28.jpg" alt="profile" />
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-            
+             
               <a class="dropdown-item">
                 <i class="ti-power-off text-primary"></i>
                 Logout
@@ -156,10 +181,9 @@
     </nav>
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-   
-
-   
-      <!-- partial -->
+      <!-- partial:../../partials/_settings-panel.html -->
+       <!-- partial -->
+        <!-- partial -->
         <!-- partial:../../partials/_sidebar.html -->
         <nav class="sidebar  sidebar-offcanvas" id="sidebar">
           <ul class="nav">
@@ -216,20 +240,20 @@
               <div class="collapse" id="ui-service">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="../service/service-dashboard.html">View Services</a>
+                    <a class="nav-link" href="./service-service-dashboard.html">View Services</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="../service/add-service.html">Add Services</a>
+                    <a class="nav-link" href="./add-service.html">Add Services</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="../service/update-service.html">Update Service</a>
+                    <a class="nav-link" href="./update-service.html">Update Service</a>
                   </li>
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="./registered-customers.html">
+              <a class="nav-link" href="../customers/registered-customers.html">
                 <i class="icon-head menu-icon"></i>
                 <span class="menu-title">Customers</span>
   
@@ -261,32 +285,35 @@
             </li> -->
           </ul>
         </nav>
-      <!-- partial -->
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Customer List</h4>
-                  <p class="card-description">
-                    <!-- Add class <code>.table-striped</code> -->
+                  <h4 class="card-title">Service List</h4>
+                  <p class="card-description ">
+
+                    <input type="text" id="searchInput" placeholder="Search...">
                   </p>
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="myTable">
                       <thead>
                         <tr>
-                          <th>S/n</th>
-                          <th>Customer name</th>
-                          <th>Email</th>
-                          <th>Phone number</th>
-                          <th>Address</th>
-                          <th>Registered on</th>
+                          <th>S/N</th>
+
+                          <th>Service Image</th>
+                          <th>Service name</th>
+                          <th>Service Description</th>
+                          <th>Service Price</th>
+                          <th>Duration</th>
+                          <th>Section</th>
+
 
                           <th></th>
                         </tr>
                       </thead>
-                      <tbody id="customerTable">
+                      <tbody id="stockTable">
 
                         <div id="loader">
                           <div class="spinner"></div>
@@ -302,24 +329,28 @@
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
          <footer class="footer">
-          <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
-                id="currentYear"></span>.
-              All rights reserved.</span>
-
-          </div>
-        </footer>
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
+                  id="currentYear"></span>.
+                All rights reserved.</span>
+  
+            </div>
+          </footer>
         <!-- partial -->
       </div>
       <!-- main-panel ends -->
     </div>
-    <!-- page-body-wrapper ends -->
+    <!-- main-panel ends -->
+  </div>
+  <!-- page-body-wrapper ends -->
   </div>
   <!-- container-scroller -->
   <!-- plugins:js -->
   <script src="../../vendors/js/vendor.bundle.base.js"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->
+  <script src="../../vendors/typeahead.js/typeahead.bundle.min.js"></script>
+  <script src="../../vendors/select2/select2.min.js"></script>
   <!-- End plugin js for this page -->
   <!-- inject:js -->
   <script src="../../js/off-canvas.js"></script>
@@ -327,10 +358,159 @@
   <script src="../../js/template.js"></script>
   <script src="../../js/settings.js"></script>
   <script src="../../js/todolist.js"></script>
-  <script src="../../js/firebase/manage_customers.js" type="module"></script>
   <!-- endinject -->
   <!-- Custom js for this page-->
+  <script src="../../js/file-upload.js"></script>
+  <script src="../../js/typeahead.js"></script>
+  <script src="../../js/select2.js"></script>
+  <script src="../../js/alert-file.js"></script>
   <!-- End custom js for this page-->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDocs,
+      onSnapshot,
+      updateDoc,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjW8pGmsL9l5olUhU5je0zKD8hkrQThZw",
+      authDomain: "boldandbeautifulsalon-89023.firebaseapp.com",
+      projectId: "boldandbeautifulsalon-89023",
+      storageBucket: "boldandbeautifulsalon-89023.appspot.com",
+      messagingSenderId: "466649288397",
+      appId: "1:466649288397:web:150d344db30d3f2185a384",
+      measurementId: "G-0V7GXFY5ZP",
+      databaseURL:
+        "https://boldandbeautifulsalon-89023-default-rtdb.firebaseio.com/",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize  Database and get a reference to the service
+    const database = getFirestore(app);
+
+    const colRef = collection(database, "service");
+
+    async function getBooking() {
+      const currentYear = new Date().getFullYear();
+document.getElementById("currentYear").textContent = currentYear;
+      let tableRow = document.getElementById("stockTable");
+      const loader = document.getElementById("loader");
+      // show the loader initially
+      loader.style.display = "block";
+
+      try {
+        const q = query(colRef, orderBy("timestamp", "desc"));
+
+        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
+          loader.style.display = "none";
+          let rows = "";
+          let index = 0;
+          docsSnap.forEach((doc) => {
+            index++;
+            let data = doc.data();
+            let row = `<tr>
+              <td>${index}</td>
+              <td><img src="${data.servicePicture}"  style="border-radius:0px;width:50px;heigth:50px"/></td>
+              <td>${data.serviceName} </td>
+              <td>
+              ${data.serviceDes}
+             
+              </td>
+              <td>
+               
+              ${data.servicePrice}
+                </td>
+              <td>  ${data.serviceDuration}</td>
+              
+              <td>
+                ${data.serviceCat}
+              </td>
+             
+              <td>
+                <i
+                  class="icon-ellipsis"
+                  id="dropdownMenuSplitButton1" data-toggle="${data.status == "Completed" ? "" : "dropdown"}" aria-haspopup="true" aria-expanded="false"
+                ></i>
+                <div
+                  class="dropdown-menu"
+                  aria-labelledby="dropdownMenuSplitButton1"
+                >
+                  <h5 class="dropdown-header">Action</h5>
+                  <a class="dropdown-item update-action" href="./update-service.html">Modify</a>
+                 
+              
+                
+                </div>
+              </td>
+            </tr>`;
+
+            rows += row;
+          });
+          tableRow.innerHTML = rows;
+
+
+
+        
+
+        
+
+         
+        });
+
+      
+       
+      
+      
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    window.onload = getBooking;
+
+  </script>
+
+
+  <script>
+    function searchTable() {
+      var input = document.getElementById("searchInput");
+      var filter = input.value.toUpperCase();
+      var table = document.getElementById("myTable");
+      var rows = table.getElementsByTagName("tr");
+      for (var i = 0; i < rows.length; i++) {
+        var cols = rows[i].getElementsByTagName("td");
+        var found = false;
+        for (var j = 0; j < cols.length; j++) {
+          var data = cols[j].textContent.toUpperCase();
+          if (data.indexOf(filter) > -1) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("keyup", searchTable);
+  </script>
+
 </body>
 
 </html>
