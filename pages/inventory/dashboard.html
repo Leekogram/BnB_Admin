@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Bnb Admin / Inventory</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="../../vendors/feather/feather.css" />
+
+  <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css" />
+  <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css" />
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="../../vendors/select2/select2.min.css" />
+  <link rel="stylesheet" href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css" />
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../../css/vertical-layout-light/style.css" />
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../../images/favicon.png" />
+  <link rel="stylesheet" href="../../css/alert-style.css" />
+  <style>
+    #loader {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      z-index: 9999;
+    }
+
+    .spinner {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #000;
+      border-top-color: #FFC100;
+      animation: spin 1s linear infinite;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      float: right;
+      width: 200px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    input[type="text"],
+    input[type="number"]:focus {
+      outline: none;
+      /* border-color: #FFC100; */
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img src="../../images/logo.png" class="mr-2"
+            alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo-mini.svg"
+            alt="logo" /></a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="icon-menu"></span>
+        </button>
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item nav-search d-none d-lg-block">
+            <div class="input-group">
+              <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                <span class="input-group-text" id="search">
+                  <i class="icon-search"></i>
+                </span>
+              </div>
+              <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now"
+                aria-label="search" aria-describedby="search" />
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+              data-toggle="dropdown">
+              <i class="icon-bell mx-0"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+              aria-labelledby="notificationDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">
+                Notifications
+              </p>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-success">
+                    <i class="ti-info-alt mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">
+                    Application Error
+                  </h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    Just now
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-warning">
+                    <i class="ti-settings mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">Settings</h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    Private message
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-info">
+                    <i class="ti-user mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">
+                    New user registration
+                  </h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    2 days ago
+                  </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+              <img src="../../images/faces/face28.jpg" alt="profile" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+             
+              <a class="dropdown-item">
+                <i class="ti-power-off text-primary"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+        
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-toggle="offcanvas">
+          <span class="icon-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:../../partials/_settings-panel.html -->
+     
+      <!-- partial -->
+      <!-- partial:../../partials/_sidebar.html -->
+         <nav class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../bookings/booking-page.html">
+                <i class="icon-grid-2 menu-icon"></i>
+                <span class="menu-title">Bookings</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-toggle="collapse"
+                href="#ui-basic"
+                aria-expanded="false"
+                aria-controls="ui-basic"
+              >
+                <i class="icon-layout menu-icon"></i>
+                <span class="menu-title">Inventory</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="ui-basic">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      href="./dashboard.html"
+                      >Stock</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      href="./add-item.html"
+                      >Add Stock</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="./update-stock.html">Update Stock</a>
+                  </li>
+                  
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="../customers/registered-customers.html"
+              >
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">Customers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
+                aria-controls="ui-basic">
+                <i class="icon-paper menu-icon"></i>
+                <span class="menu-title">Message</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="ui-message">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="#">View messages</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="../../send-bc-message.html">Send Message</a></li>
+  
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Product List</h4>
+                  <p class="card-description ">
+
+                    <input type="text" id="searchInput" placeholder="Search...">
+                  </p>
+                  <div class="table-responsive">
+                    <table class="table" id="myTable">
+                      <thead>
+                        <tr>
+                          <th>S/N</th>
+
+                          <th>Product Image</th>
+                          <th>Product name</th>
+                          <th>Product Description</th>
+                          <th>Product Price</th>
+                          <th>Unit</th>
+                          <th>Status</th>
+
+
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="stockTable">
+
+                        <div id="loader">
+                          <div class="spinner"></div>
+                        </div>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:../../partials/_footer.html -->
+         <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
+                  id="currentYear"></span>.
+                All rights reserved.</span>
+  
+            </div>
+          </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- main-panel ends -->
+  </div>
+  <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="../../vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="../../vendors/typeahead.js/typeahead.bundle.min.js"></script>
+  <script src="../../vendors/select2/select2.min.js"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="../../js/off-canvas.js"></script>
+  <script src="../../js/hoverable-collapse.js"></script>
+  <script src="../../js/template.js"></script>
+  <script src="../../js/settings.js"></script>
+  <script src="../../js/todolist.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="../../js/file-upload.js"></script>
+  <script src="../../js/typeahead.js"></script>
+  <script src="../../js/select2.js"></script>
+  <script src="../../js/alert-file.js"></script>
+  <!-- End custom js for this page-->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDocs,
+      onSnapshot,
+      updateDoc,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjW8pGmsL9l5olUhU5je0zKD8hkrQThZw",
+      authDomain: "boldandbeautifulsalon-89023.firebaseapp.com",
+      projectId: "boldandbeautifulsalon-89023",
+      storageBucket: "boldandbeautifulsalon-89023.appspot.com",
+      messagingSenderId: "466649288397",
+      appId: "1:466649288397:web:150d344db30d3f2185a384",
+      measurementId: "G-0V7GXFY5ZP",
+      databaseURL:
+        "https://boldandbeautifulsalon-89023-default-rtdb.firebaseio.com/",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize  Database and get a reference to the service
+    const database = getFirestore(app);
+
+    const colRef = collection(database, "products");
+
+    async function getBooking() {
+      const currentYear = new Date().getFullYear();
+document.getElementById("currentYear").textContent = currentYear;
+      let tableRow = document.getElementById("stockTable");
+      const loader = document.getElementById("loader");
+      // show the loader initially
+      loader.style.display = "block";
+
+      try {
+        const q = query(colRef, orderBy("timestamp", "desc"));
+
+        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
+          loader.style.display = "none";
+          let rows = "";
+          let index = 0;
+          docsSnap.forEach((doc) => {
+            index++;
+            let data = doc.data();
+            let row = `<tr>
+              <td>${index}</td>
+              <td><img src="${data.productPicture}"  style="border-radius:0px;width:50px;heigth:50px"/></td>
+              <td>${data.productName} </td>
+              <td>
+              ${data.productDesc}
+             
+              </td>
+              <td>
+               
+              ${data.productPrice}
+                </td>
+              <td>  ${data.productQty}</td>
+              
+              <td>
+                <label class="badge ${data.productQty == 0
+                ? "badge-secondary"
+                : data.productQty <= 2
+                  ? "badge-warning"
+                  : data.productQty >= 3
+                    ? "badge-success" : "badge-dart"
+
+              }" id="statusLabel"
+                  >${data.productQty == 0
+                ? "Not available"
+                : data.productQty <= 2
+                  ? "Low in stock"
+                  : data.productQty >= 3
+                    ? "Available"
+                    : "Not available"}</label
+                >
+              </td>
+             
+              <td>
+                <i
+                  class="icon-ellipsis"
+                  id="dropdownMenuSplitButton1" data-toggle="${data.status == "Completed" ? "" : "dropdown"}" aria-haspopup="true" aria-expanded="false"
+                ></i>
+                <div
+                  class="dropdown-menu"
+                  aria-labelledby="dropdownMenuSplitButton1"
+                >
+                  <h5 class="dropdown-header">Action</h5>
+                  <a class="dropdown-item update-action" href="./update-stock.html">Modify</a>
+                 
+              
+                
+                </div>
+              </td>
+            </tr>`;
+
+            rows += row;
+          });
+          tableRow.innerHTML = rows;
+
+
+
+        
+
+        
+
+         
+        });
+
+      
+       
+      
+      
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    window.onload = getBooking;
+
+  </script>
+
+
+  <script>
+    function searchTable() {
+      var input = document.getElementById("searchInput");
+      var filter = input.value.toUpperCase();
+      var table = document.getElementById("myTable");
+      var rows = table.getElementsByTagName("tr");
+      for (var i = 0; i < rows.length; i++) {
+        var cols = rows[i].getElementsByTagName("td");
+        var found = false;
+        for (var j = 0; j < cols.length; j++) {
+          var data = cols[j].textContent.toUpperCase();
+          if (data.indexOf(filter) > -1) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("keyup", searchTable);
+  </script>
+
+</body>
+
+</html>

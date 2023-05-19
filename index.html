@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Bnb Admin</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/feather/feather.css">
+  <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" type="text/css" href="js/select.dataTables.min.css">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/vertical-layout-light/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+  <style>
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    #notSpan{
+      visibility: hidden;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      border-radius: 30px;
+    }
+
+
+
+    #bookingloader,
+    stockloader,
+    customeloader {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      z-index: 9999;
+    }
+
+    .spinner {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #000;
+      border-top-color: #FFC100;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="images/logo.png" class="mr-2"
+            alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/logo.png" alt="logo" /></a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="icon-menu"></span>
+        </button>
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item nav-search d-none d-lg-block">
+            <div class="input-group">
+              <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                <span class="input-group-text" id="search">
+                  <i class="icon-search"></i>
+                </span>
+              </div>
+              <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now"
+                aria-label="search" aria-describedby="search">
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+              data-toggle="dropdown">
+              <i class="icon-bell mx-0"></i>
+              <span class="count" id="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+              aria-labelledby="notificationDropdown" id="notificationTray">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+
+
+
+            </div>
+          </li>
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+              <img src="images/faces/face28.jpg" alt="profile" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+
+              <a class="dropdown-item" id="sign-out-btn">
+                <i class="ti-power-off text-primary"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+          <!--  <li class="nav-item nav-settings d-none d-lg-flex">
+            <a class="nav-link" href="#">
+              <i class="icon-ellipsis"></i>
+            </a>
+          </li> -->
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-toggle="offcanvas">
+          <span class="icon-menu"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Modal -->
+    <div id="sign-out-modal" class="modal">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <button class="btn btn-danger btn-rounded align-self-center mb-3 w-50" id="confirm-sign-out-btn">Yes, sign me
+          out</button>
+        <button class="btn  btn-success btn-rounded align-self-center w-50" id="cancel-sign-out-btn">Cancel</button>
+      </div>
+    </div>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+      <div id="right-sidebar" class="settings-panel">
+        <i class="settings-close ti-close"></i>
+        <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab"
+              aria-controls="todo-section" aria-expanded="true">TO DO</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab"
+              aria-controls="chats-section">MESSAGES</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="setting-content">
+          <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel"
+            aria-labelledby="todo-section">
+            <div class="add-items d-flex px-3 mb-0">
+
+              <div class="form-group d-flex">
+
+                <button class=" btn btn-primary "><a href="./send-bc-message.html" class="text-white"> Send
+                    Message</a></button>
+              </div>
+
+            </div>
+
+
+          </div>
+          <!-- To do section tab ends -->
+          <div class="tab-pane fade" id="chats-section" role="tabpanel" aria-labelledby="chats-section">
+            <div class="d-flex align-items-center justify-content-between border-bottom">
+              <p class="settings-heading border-top-0 mb-3 pl-3 pt-0 border-bottom-0 pb-0">Customers</p>
+              <small class="settings-heading border-top-0 mb-3 pt-0 border-bottom-0 pb-0 pr-3 font-weight-normal">See
+                All</small>
+            </div>
+            <ul class="chat-list">
+              <li class="list active">
+                <div class="profile"><img src="images/faces/face1.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Thomas Douglas</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">19 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face2.jpg" alt="image"><span class="offline"></span></div>
+                <div class="info">
+                  <div class="wrapper d-flex">
+                    <p>Catherine</p>
+                  </div>
+                  <p>Away</p>
+                </div>
+                <div class="badge badge-success badge-pill my-auto mx-2">4</div>
+                <small class="text-muted my-auto">23 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face3.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Daniel Russell</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">14 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face4.jpg" alt="image"><span class="offline"></span></div>
+                <div class="info">
+                  <p>James Richardson</p>
+                  <p>Away</p>
+                </div>
+                <small class="text-muted my-auto">2 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face5.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Madeline Kennedy</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">5 min</small>
+              </li>
+              <li class="list">
+                <div class="profile"><img src="images/faces/face6.jpg" alt="image"><span class="online"></span></div>
+                <div class="info">
+                  <p>Sarah Graves</p>
+                  <p>Available</p>
+                </div>
+                <small class="text-muted my-auto">47 min</small>
+              </li>
+            </ul>
+          </div>
+          <!-- chat tab ends -->
+        </div>
+      </div>
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/bookings/booking-page.html">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">Bookings</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+              <i class="icon-layout menu-icon"></i>
+              <span class="menu-title">Inventory</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/inventory/dashboard.html">View Stock</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/inventory/add-item.html">Add Stock</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./pages/inventory/update-stock.html">Update Stock</a>
+                </li>
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/customers/registered-customers.html">
+              <i class="icon-head menu-icon"></i>
+              <span class="menu-title">Customers</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Message</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-message">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="#">View messages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="./send-bc-message.html">Send Message</a></li>
+
+              </ul>
+            </div>
+          </li>
+          <!--   <li class="nav-item">
+            <a class="nav-link" href="" >
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">FeedBacks</span>
+
+            </a>
+          
+          </li> -->
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="row">
+                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                  <h3 class="font-weight-bold">Welcome Admin</h3>
+                  <h6 class="font-weight-normal mb-0">All systems are running smoothly! <span class="text-primary"
+                      id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
+                </div>
+                <div class="col-12 col-xl-4">
+                  <div class="justify-content-end d-flex">
+                    <div class=" flex-md-grow-1 flex-xl-grow-0">
+                      <button class="btn btn-sm btn-light bg-white " aria-expanded="true">
+                        <i class="mdi mdi-calendar"></i> <span id="today"></span>
+                      </button>
+                      <!--   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
+                        <a class="dropdown-item" href="#">January - March</a>
+                        <a class="dropdown-item" href="#">March - June</a>
+                        <a class="dropdown-item" href="#">June - August</a>
+                        <a class="dropdown-item" href="#">August - November</a>
+                      </div>  -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <!--   <div class="col-md-6 grid-margin stretch-card">
+              <div class="card tale-bg">
+                <div class="card-people mt-auto">
+                  <img src="images/dashboard/people.svg" alt="people">
+                  <div class="weather-info">
+                    <div class="d-flex">
+                      <div>
+                        <h2 class="mb-0 font-weight-normal"><i class="icon-sun mr-2"></i>31<sup>C</sup></h2>
+                      </div>
+                      <div class="ml-2">
+                        <h4 class="location font-weight-normal">FCT-Abuja</h4>
+                        <h6 class="font-weight-normal">Nigeria</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <div class="col-md-6 grid-margin transparent">
+              <div class="row">
+                <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="card card-dark-blue">
+                    <div class="card-body">
+                      <p class="mb-4">Total Bookings</p>
+                      <p class="fs-30 mb-2" id="totalBooking"></p>
+                      <!-- <p>22.00% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="card card-tale">
+                    <div class="card-body">
+                      <p class="mb-4">Today’s Bookings</p>
+                      <p class="fs-30 mb-2" id="todaysBookings"></p>
+                      <!-- <p>10.00% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                  <div class="card card-light-blue">
+                    <div class="card-body">
+                      <p class="mb-4">Total Registered Customers</p>
+                      <p class="fs-30 mb-2" id="registeredCustomer"></p>
+                      <!-- <p>2.00% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6 stretch-card transparent">
+                  <div class="card card-light-danger">
+                    <div class="card-body">
+                      <p class="mb-4">Today's Registered Customers</p>
+                      <p class="fs-30 mb-2" id="todaysRegCustomer"></p>
+                      <!-- <p>0.22% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+            <div class="col-md-6 grid-margin transparent">
+              <div class="row">
+                <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="card   bg-warning">
+                    <div class="card-body">
+                      <p class="mb-4">Total Orders</p>
+                      <p class="fs-30 mb-2" id="totalOrders">0</p>
+                      <!-- <p>22.00% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-4 stretch-card transparent">
+                  <div class="card card-light-blue bg-info">
+                    <div class="card-body">
+                      <p class="mb-4">Today’s Orders</p>
+                      <p class="fs-30 mb-2" id="todaysOrders">0</p>
+                      <!-- <p>10.00% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                  <div class="card card-light-blue">
+                    <div class="card-body">
+                      <p class="mb-4">Total Products</p>
+                      <p class="fs-30 mb-2" id="ourProducts"></p>
+                      <!-- <p>2.00% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6 stretch-card transparent">
+                  <div class="card card-light-danger">
+                    <div class="card-body">
+                      <p class="mb-4">Today's Added Products</p>
+                      <p class="fs-30 mb-2 " id="todayaddedProducts"></p>
+                      <!-- <p>0.22% (30 days)</p> -->
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="content-wrapper">
+              <div class="row">
+                <div class="col-lg-12 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Bookings</h4>
+                      <p class="card-description ">
+                        <!-- Note: No action can be performed on a completed booking  <span class="text-danger">(Take note when choosing this action)</span>. -->
+                      </p>
+                      <div class="table-responsive">
+                        <table class="table expandable-table ">
+                          <thead>
+                            <tr>
+                              <th>S/N</th>
+                              <th>Customer name</th>
+                              <th>Service</th>
+                              <th>Phone number</th>
+                              <th>Email</th>
+
+
+
+                              <th>Booking Status</th>
+
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody id="bookingTable">
+
+                            <div id="bookingloader">
+                              <div class="spinner"></div>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div id="pagination"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4>Products</h4>
+                  <div class="table-responsive">
+                    <table class="table  expandable-table table-striped table-borderless" id="productTable">
+                      <thead>
+                        <tr>
+                          <th>S/n</th>
+                          <th>Product</th>
+                          <th>Price</th>
+                          <th>Unit</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="stockTable">
+
+                        <div id="stockloader">
+                          <div class="spinner"></div>
+                        </div>
+                      </tbody>
+
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="content-wrapper">
+              <div class="row">
+                <div class="col-lg-12 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Registered Customers</h4>
+                      <p class="card-description">
+                        <!-- Add class <code>.table-striped</code> -->
+                      </p>
+                      <div class="table-responsive">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>S/n</th>
+                              <th>Customer name</th>
+
+                              <th>Phone number</th>
+                              <th>Email</th>
+
+
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody id="customerTable">
+
+                            <div id="customerloader">
+                              <div class="spinner"></div>
+                            </div>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
+                id="currentYear"></span>.
+              All rights reserved.</span>
+
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <!-- plugins:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="vendors/chart.js/Chart.min.js"></script>
+  <script src="vendors/datatables.net/jquery.dataTables.js"></script>
+  <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+  <script src="js/dataTables.select.min.js"></script>
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/todolist.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="js/dashboard.js"></script>
+  <script src="js/Chart.roundedBarCharts.js"></script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDocs,
+      onSnapshot,
+      updateDoc,
+      query, where, orderBy
+    } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjW8pGmsL9l5olUhU5je0zKD8hkrQThZw",
+      authDomain: "boldandbeautifulsalon-89023.firebaseapp.com",
+      projectId: "boldandbeautifulsalon-89023",
+      storageBucket: "boldandbeautifulsalon-89023.appspot.com",
+      messagingSenderId: "466649288397",
+      appId: "1:466649288397:web:150d344db30d3f2185a384",
+      measurementId: "G-0V7GXFY5ZP",
+      databaseURL:
+        "https://boldandbeautifulsalon-89023-default-rtdb.firebaseio.com/",
+    };
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize  Database and get a reference to the service
+    const database = getFirestore(app);
+    // Initialize Firebase Authentication and get a reference to the service
+    const auth = getAuth(app);
+
+    const colRef = collection(database, "bookings");
+
+    async function getBooking() {
+
+      const currentYear = new Date().getFullYear();
+      document.getElementById("currentYear").textContent = currentYear;
+
+      //check if user is logged in or not
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+          const uid = user.uid;
+
+
+          // ...
+        } else {
+          // User is signed out
+          // ...
+          window.location.href = "login.html";
+        }
+      });
+
+      let tableRow = document.getElementById("bookingTable");
+      let totalBooking = document.getElementById("totalBooking");
+      const loader = document.getElementById("bookingloader");
+      // show the loader initially
+      loader.style.display = "block";
+
+      try {
+
+        const q = query(colRef, orderBy("timestamp", "desc"));
+
+        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
+          loader.style.display = "none";
+          let rows = "";
+          let index = 0;
+
+          const bookingCount = docsSnap.size;
+          totalBooking.innerHTML = bookingCount;
+
+          docsSnap.forEach((doc) => {
+            index++;
+            let data = doc.data();
+            let row = `<tr>
+              <td>${index}</td>
+              <td>${data.name}</td>
+              <td>
+                <div>${data.service}</div>
+              </td>
+              <td>${data.phone}</td>
+              <td>${data.email}</td>
+             
+              <td>
+                <label class="badge ${data.status == "Pending"
+                ? "badge-warning"
+                : data.status == "Accepted"
+                  ? "badge-success"
+                  : data.status == "Cancelled"
+                    ? "badge-primary"
+                    : data.status == "Completed"
+                      ? "badge-dark"
+                      : "badge-danger"
+              }" id="statusLabel"
+                  >${data.status}</label
+                >
+              </td>
+             
+              <td>
+                <i
+                  class="icon-ellipsis"
+                  id="dropdownMenuSplitButton1" data-toggle="${data.status == "Completed" ? "" : "dropdown"}" aria-haspopup="true" aria-expanded="false"
+                ></i>
+                <div
+                  class="dropdown-menu"
+                  aria-labelledby="dropdownMenuSplitButton1"
+                >
+                  <h6 class="dropdown-header">Action</h6>
+                  <a class="dropdown-item accept-action" data-docid="${doc.id
+              }">Accept</a>
+                  <a class="dropdown-item complete-action" data-docid="${doc.id
+              }">Complete</a>
+                  <a class="dropdown-item cancel-action" data-docid="${doc.id
+              }">Cancel</a>
+                  <a class="dropdown-item reject-action" data-docid="${doc.id
+              }">Reject</a>
+                
+                </div>
+              </td>
+            </tr>`;
+
+            rows += row;
+          });
+          tableRow.innerHTML = rows;
+          // Add event listener to accept dropdown item
+          const acceptItems = document.querySelectorAll(".accept-action");
+          acceptItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              acceptFunction(docId);
+            });
+          });
+
+          // Add event listener to complete dropdown item
+          const completeItems = document.querySelectorAll(".complete-action");
+          completeItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              completeFunction(docId);
+            });
+          });
+
+          // Add event listener to cancel dropdown item
+          const cancelItems = document.querySelectorAll(".cancel-action");
+          cancelItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              cancelFunction(docId);
+            });
+          });
+
+          // Add event listener to reject dropdown item
+          const rejectItems = document.querySelectorAll(".reject-action");
+          rejectItems.forEach((item) => {
+            item.addEventListener("click", (event) => {
+              const docId = event.target.dataset.docid;
+              rejectFunction(docId);
+            });
+          });
+        });
+
+
+
+
+
+
+
+        function acceptFunction(docId) {
+          // Execute your accept function here with the docId parameter
+          console.log("Accept function executed for docId", docId);
+
+          const docRef = doc(database, "bookings", docId);
+
+          const data = {
+            status: "Accepted",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+
+        function completeFunction(docId) {
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "bookings", docId);
+
+          const data = {
+            status: "Completed",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+        function cancelFunction(docId) {
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "bookings", docId);
+
+          const data = {
+            status: "Cancelled",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+        function rejectFunction(docId) {
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "bookings", docId);
+
+          const data = {
+            status: "Rejected",
+          };
+          updateDoc(docRef, data)
+            .then((docRef) => {
+              console.log(
+                "A New Document Field has been added to an existing document"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    //get today's booking
+    async function getTodayBookings() {
+      try {
+
+        const today = new Date();
+        const day = today.toLocaleString('en-us', { weekday: 'long' });
+        const date = today.getDate();
+        const month = today.toLocaleString('en-us', { month: 'short' });
+        const year = today.getFullYear();
+        const todayString = `Today (${date} ${month} ${year})`;
+
+        document.getElementById("today").textContent = todayString;
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        const q = query(collection(database, "bookings"), where("timestamp", ">=", start), where("timestamp", "<", end));
+        await
+          onSnapshot(q, (querySnapshot) => {
+            const todaysbookingCount = querySnapshot.size;
+            document.getElementById('todaysBookings').innerHTML = todaysbookingCount
+
+          });
+
+
+
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    //get notifications
+    async function getNotifications() {
+      try {
+        // Get a reference to the notificationTray element
+        const notificationTray = document.getElementById('notificationTray');
+        // const notSpan = document.getElementById('notSpan');
+
+
+
+        const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
+        await
+          onSnapshot(q, (querySnapshot) => {
+            const notificationCount = querySnapshot.size;
+
+            if (querySnapshot.size > 0) {
+              document.getElementById('notSpan').style.visibility = "visible";
+              document.getElementById('count').innerHTML = notificationCount
+              document.getElementById('notCount').innerHTML = notificationCount;
+            } else {
+              document.getElementById('notSpan').style.visibility = "hidden";
+            }
+
+
+            // Loop through each document in the query snapshot and create an HTML element for it
+            querySnapshot.forEach((doc) => {
+              // Get the data from the document
+              const notification = doc.data();
+
+              // Create a new anchor element for the notification
+              const notificationLink = document.createElement('a');
+              notificationLink.classList.add('dropdown-item', 'preview-item');
+              notificationLink.setAttribute('href', './pages/bookings/booking-page.html');
+
+
+              // Create the preview-thumbnail element
+              const previewThumbnail = document.createElement('div');
+              previewThumbnail.classList.add('preview-thumbnail');
+
+              // Create the preview-icon element
+              const previewIcon = document.createElement('div');
+              previewIcon.classList.add('preview-icon', 'bg-success');
+              const icon = document.createElement('i');
+              icon.classList.add('ti-info-alt', 'mx-0');
+              previewIcon.appendChild(icon);
+              previewThumbnail.appendChild(previewIcon);
+
+              // Create the preview-item-content element
+              const previewItemContent = document.createElement('div');
+              previewItemContent.classList.add('preview-item-content');
+              const subject = document.createElement('h6');
+              subject.classList.add('preview-subject', 'font-weight-normal');
+              subject.textContent = notification.title;
+              const message = document.createElement('p');
+              message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+              message.textContent = notification.message;
+              const time = document.createElement('p');
+              time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+              time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
+              previewItemContent.appendChild(subject);
+              previewItemContent.appendChild(message);
+              previewItemContent.appendChild(time);
+
+              // Add the preview-thumbnail and preview-item-content elements to the anchor element
+              notificationLink.appendChild(previewThumbnail);
+              notificationLink.appendChild(previewItemContent);
+
+              // Add the anchor element to the notificationTray element
+              notificationTray.appendChild(notificationLink);
+            });
+
+          });
+
+
+        function getTimeAgo(dateString) {
+          const date = new Date(dateString);
+          const now = new Date();
+          const diffMs = now - date;
+          const diffSec = Math.round(diffMs / 1000);
+          const diffMin = Math.round(diffSec / 60);
+          const diffHr = Math.round(diffMin / 60);
+          const diffDays = Math.round(diffHr / 24);
+
+          if (diffSec < 60) {
+            return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
+          } else if (diffMin < 60) {
+            return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+          } else if (diffHr < 24) {
+            return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
+          } else if (diffDays === 1) {
+            return `1 day ago`;
+          } else if (diffDays < 30) {
+            return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+          } else {
+            const diffMonths = Math.floor(diffDays / 30);
+            return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
+          }
+        }
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
+    //Fetch Customers
+    const customerColRef = collection(database, "users");
+
+    async function getCustomer() {
+      let tableRow = document.getElementById("customerTable");
+      let registeredCustomer = document.getElementById("registeredCustomer");
+      const loader = document.getElementById("customerloader");
+      // show the loader initially
+      loader.style.display = "block";
+
+      function formatDate(timestamp) {
+        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+        return date.toLocaleString();
+      }
+
+
+      try {
+
+        const q = query(customerColRef, orderBy("createdDateTime", "desc"));
+        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
+          loader.style.display = "none";
+          let rows = "";
+          let index = 0;
+
+          const customerbookingCount = docsSnap.size;
+          registeredCustomer.innerHTML = customerbookingCount;
+
+          docsSnap.forEach((doc) => {
+            index++;
+            let data = doc.data();
+            let row = `<tr>
+              <td>${index}</td>
+              <td>${data.fullName}</td>
+              <td>
+                <div>${data.email}</div>
+              </td>
+              <td>${data.phoneNo}</td>
+          
+          
+            
+              
+             
+              <td>
+                <a href="./pages/customers/registered-customers.html" style="text-decoration:none;color:black">
+                <i
+                  class="icon-eye"
+                 aria-haspopup="true" aria-expanded="false"
+                ></i> View
+               </a>
+              </td>
+            </tr>`;
+
+            rows += row;
+          });
+          tableRow.innerHTML = rows;
+
+
+
+        });
+
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
+
+    //get today's registered customer
+    async function getTodayRegCustomer() {
+      try {
+
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        const q = query(collection(database, "users"), where("timestamp", ">=", start), where("timestamp", "<", end));
+        await
+          onSnapshot(q, (querySnapshot) => {
+            const todaysRegCount = querySnapshot.size;
+            document.getElementById('todaysRegCustomer').innerHTML = todaysRegCount
+
+          });
+
+
+
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
+    //Fetch products
+    const productsColRef = collection(database, "products");
+
+    async function getProducts() {
+      let tableRow = document.getElementById("stockTable");
+      let ourProducts = document.getElementById("ourProducts");
+      const loader = document.getElementById("stockloader");
+      // show the loader initially
+      loader.style.display = "block";
+
+      function formatDate(timestamp) {
+        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+        return date.toLocaleString();
+      }
+
+
+      try {
+        const q = query(productsColRef, orderBy("timestamp", "desc"));
+
+        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
+          loader.style.display = "none";
+          let rows = "";
+          let index = 0;
+
+          const productCount = docsSnap.size;
+          ourProducts.innerHTML = productCount;
+
+          docsSnap.forEach((doc) => {
+            index++;
+            let data = doc.data();
+            let row = `<tr>
+              <td>${index}</td>
+              <td>${data.productName}</td>
+              <td>
+                <div>${data.productPrice}</div>
+              </td>
+              <td>
+                <div>${data.productQty}</div>
+              </td>
+              <td>
+                <label class="badge ${data.productQty == 0
+                ? "badge-secondary"
+                : data.productQty <= 2
+                  ? "badge-warning"
+                  : data.productQty >= 3
+                    ? "badge-success" : "badge-dart"
+
+              }" id="statusLabel"
+                  >${data.productQty == 0
+                ? "Not available"
+                : data.productQty <= 2
+                  ? "Low in stock"
+                  : data.productQty >= 3
+                    ? "Available"
+                    : "Not available"}</label
+                >
+                </td>
+          
+          
+            
+              
+             
+              <td>
+                <a href="./pages/inventory/dashboard.html" style="text-decoration:none;color:black">
+                <i
+                  class="icon-eye"
+                 aria-haspopup="true" aria-expanded="false"
+                ></i> View
+               </a>
+              </td>
+            </tr>`;
+
+            rows += row;
+          });
+          tableRow.innerHTML = rows;
+
+
+
+        });
+
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    //get today's added product
+    async function getTodayaddedProduct() {
+      try {
+
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        const q = query(collection(database, "products"), where("timestamp", ">=", start), where("timestamp", "<", end));
+        await
+          onSnapshot(q, (querySnapshot) => {
+            const todaysAddedProdCount = querySnapshot.size;
+            document.getElementById('todayaddedProducts').innerHTML = todaysAddedProdCount
+
+          });
+
+
+
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
+    // signout user
+
+
+    const signOutBtn = document.getElementById("sign-out-btn");
+    const signOutModal = document.getElementById("sign-out-modal");
+    const confirmSignOutBtn = document.getElementById("confirm-sign-out-btn");
+    const cancelSignOutBtn = document.getElementById("cancel-sign-out-btn");
+
+    // Show the modal when the sign-out button is clicked
+    signOutBtn.addEventListener("click", () => {
+      signOutModal.style.display = "block";
+    });
+
+    // Hide the modal when the cancel button is clicked
+    cancelSignOutBtn.addEventListener("click", () => {
+      signOutModal.style.display = "none";
+    });
+
+    // Sign the user out of Firebase when the confirm button is clicked
+    confirmSignOutBtn.addEventListener("click", () => {
+      auth.signOut()
+        .then(() => {
+          console.log("User signed out successfully");
+          signOutModal.style.display = "none";
+        })
+        .catch((error) => {
+          console.error("Error signing out:", error);
+          signOutModal.style.display = "none";
+        });
+    });
+
+    window.onload = function () {
+      // call both functions
+      getBooking();
+      getCustomer();
+      getProducts();
+      getTodayBookings();
+      getTodayRegCustomer();
+      getTodayaddedProduct();
+      getNotifications();
+    };
+
+  </script>
+
+
+
+
+  <!-- End custom js for this page-->
+</body>
+
+</html>
