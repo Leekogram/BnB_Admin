@@ -253,6 +253,8 @@
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="./pages/message/view_messages.html">View messages</a></li>
                 <li class="nav-item"> <a class="nav-link" href="./send-bc-message.html">Send Message</a></li>
+                <li class="nav-item"> <a class="nav-link" href="./send-bc-message.html">Feed backs</a></li>
+                <li class="nav-item"> <a class="nav-link" href="./live_chat.html">Live chat</a></li>
 
               </ul>
             </div>
@@ -609,10 +611,11 @@
       getFirestore,
       collection,
       doc,
+      addDoc,
       getDocs,
       onSnapshot,
       updateDoc,
-      query, where, orderBy
+      query, where, orderBy,serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
     // TODO: Add SDKs for Firebase products that you want to use
@@ -713,13 +716,13 @@
                 >
                   <h6 class="dropdown-header">Action</h6>
                   <a class="dropdown-item accept-action" data-docid="${doc.id
-              }">Accept</a>
+              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Accept</a>
                   <a class="dropdown-item complete-action" data-docid="${doc.id
-              }">Complete</a>
+              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Complete</a>
                   <a class="dropdown-item cancel-action" data-docid="${doc.id
-              }">Cancel</a>
+              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Cancel</a>
                   <a class="dropdown-item reject-action" data-docid="${doc.id
-              }">Reject</a>
+              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Reject</a>
                 
                 </div>
               </td>
@@ -733,7 +736,9 @@
           acceptItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              acceptFunction(docId);
+              const serviceName = event.target.dataset.servicename;
+              const customerEmail = event.target.dataset.customeremail;
+              acceptFunction(docId,serviceName,customerEmail);
             });
           });
 
@@ -742,7 +747,9 @@
           completeItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              completeFunction(docId);
+              const serviceName = event.target.dataset.servicename;
+              const customerEmail = event.target.dataset.customeremail;
+              completeFunction(docId,serviceName,customerEmail);
             });
           });
 
@@ -751,7 +758,9 @@
           cancelItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              cancelFunction(docId);
+              const serviceName = event.target.dataset.servicename;
+              const customerEmail = event.target.dataset.customeremail;
+              cancelFunction(docId,serviceName,customerEmail);
             });
           });
 
@@ -760,18 +769,16 @@
           rejectItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              rejectFunction(docId);
+              const serviceName = event.target.dataset.servicename;
+              const customerEmail = event.target.dataset.customeremail;
+              rejectFunction(docId,serviceName,customerEmail);
             });
           });
         });
 
 
 
-
-
-
-
-        function acceptFunction(docId) {
+        function acceptFunction(docId,serviceName,customerEmail) {
           // Execute your accept function here with the docId parameter
           console.log("Accept function executed for docId", docId);
 
@@ -789,9 +796,16 @@
             .catch((error) => {
               console.log(error);
             });
+            addDoc(collection(database, "appNotification"), {
+            message: `Your booking for ${serviceName} has been accepted.`,
+            email:customerEmail,
+            status:"New",
+            timestamp: serverTimestamp(),
+          });
+            
         }
 
-        function completeFunction(docId) {
+        function completeFunction(docId,serviceName,customerEmail) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
           const docRef = doc(database, "bookings", docId);
@@ -808,8 +822,14 @@
             .catch((error) => {
               console.log(error);
             });
+            addDoc(collection(database, "appNotification"), {
+            message: `Your booking for ${serviceName} has been set to completed.`,
+            email:customerEmail,
+            status:"New",
+            timestamp: serverTimestamp(),
+          });
         }
-        function cancelFunction(docId) {
+        function cancelFunction(docId,serviceName,customerEmail) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
           const docRef = doc(database, "bookings", docId);
@@ -826,8 +846,14 @@
             .catch((error) => {
               console.log(error);
             });
+            addDoc(collection(database, "appNotification"), {
+            message: `Your booking for ${serviceName} has been canceled.`,
+            email:customerEmail,
+            status:"New",
+            timestamp: serverTimestamp(),
+          });
         }
-        function rejectFunction(docId) {
+        function rejectFunction(docId,serviceName,customerEmail) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
           const docRef = doc(database, "bookings", docId);
@@ -844,6 +870,12 @@
             .catch((error) => {
               console.log(error);
             });
+            addDoc(collection(database, "appNotification"), {
+            message: `Your booking for ${serviceName} has been declined.`,
+            email:customerEmail,
+            status:"New",
+            timestamp: serverTimestamp(),
+          });
         }
       } catch (error) {
         console.log(error);
@@ -1022,6 +1054,9 @@
               console.log(error);
             });
 
+      
+
+        
           addDoc(collection(database, "log"), {
             comment: "Booking status has been updated to accepted.",
 
@@ -1195,6 +1230,8 @@
               notificationLink.classList.add('dropdown-item', 'preview-item');
               if (notification.type == "service") {
                 notificationLink.setAttribute('href', './pages/bookings/booking-page.html');
+              } else if(notification.type == "feedback") {
+                notificationLink.setAttribute('href', './feedbacks.html');
               } else {
                 notificationLink.setAttribute('href', './pages/orders/orders.html');
               }
