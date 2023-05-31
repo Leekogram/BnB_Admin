@@ -199,14 +199,7 @@ async function getOrders() {
         });
       });
 
-      // Add event listener to reject dropdown item
-      const rejectItems = document.querySelectorAll(".reject-action");
-      rejectItems.forEach((item) => {
-        item.addEventListener("click", (event) => {
-          const docId = event.target.dataset.docid;
-          rejectFunction(docId);
-        });
-      });
+     
     });
 
     
@@ -306,37 +299,7 @@ async function getOrders() {
           // document.getElementById("productForm").reset();
         });
     }
-    function rejectFunction(docId) {
-      // Execute your complete function here with the docId parameter
-      console.log("Complete function executed for docId", docId);
-      const docRef = doc(database, "orders", docId);
 
-      const data = {
-        orderStatus: "Rejected",
-      };
-      updateDoc(docRef, data)
-        .then((docRef) => {
-          console.log(
-            "A New Document Field has been added to an existing document"
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      addDoc(collection(database, "log"), {
-        comment: "Order status has been update to rejected.",
-
-        timestamp: serverTimestamp(),
-      })
-        .then((docRef) => {
-          console.log("Product has been updated successfully");
-        })
-        .catch((error) => {
-          console.log(error);
-          // document.getElementById("productForm").reset();
-        });
-    }
   } catch (error) {
     console.log(error);
   }

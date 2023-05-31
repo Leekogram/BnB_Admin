@@ -12,6 +12,7 @@ import {
   orderBy,
   writeBatch,
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -34,9 +35,12 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize  Database and get a reference to the service
 const database = getFirestore(app);
+const auth = getAuth(app);
 
 const colRef = collection(database, "bookings");
 // const notRef = collection(database, "orderNotification");
+
+
 
 
   async function updateNotificationStatus() {
@@ -52,7 +56,7 @@ const colRef = collection(database, "bookings");
         batch.update(docRef, { status: "read" });
       });
   
-       batch.commit(); batch.commit().then(() => {
+      batch.commit().then(() => {
         console.log("Batch update completed successfully.");
       }).catch((error) => {
         console.error("Error committing batch update:", error);
@@ -64,9 +68,39 @@ const colRef = collection(database, "bookings");
     // call unsubscribe in the "beforeDestroy" hook.
     // unsubscribe();
   }
+
+  const signOutBtn = document.getElementById("sign-out-btn");
+  const signOutModal = document.getElementById("sign-out-modal");
+  const confirmSignOutBtn = document.getElementById("confirm-sign-out-btn");
+  const cancelSignOutBtn = document.getElementById("cancel-sign-out-btn");
+
+  // Show the modal when the sign-out button is clicked
+  signOutBtn.addEventListener("click", () => {
+    signOutModal.style.display = "block";
+  });
+
+  // Hide the modal when the cancel button is clicked
+  cancelSignOutBtn.addEventListener("click", () => {
+    signOutModal.style.display = "none";
+  });
+
+  // Sign the user out of Firebase when the confirm button is clicked
+  confirmSignOutBtn.addEventListener("click", () => {
+    auth.signOut()
+      .then(() => {
+        console.log("User signed out successfully");
+        signOutModal.style.display = "none";
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+        signOutModal.style.display = "none";
+      });
+  });
   
 
 async function getBooking() {
+
+
 
   const currentYear = new Date().getFullYear();
   document.getElementById("currentYear").textContent = currentYear;
@@ -74,6 +108,15 @@ async function getBooking() {
   const loader = document.getElementById("loader");
   // show the loader initially
   loader.style.display = "block";
+
+   //check if user is logged in or not
+   onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const uid = user.uid;
+    } else {
+      window.location.href = "../../../login.html";
+    }
+  });
 
   try {
 
@@ -91,7 +134,7 @@ async function getBooking() {
         let data = doc.data();
         let row = `<tr>
               <td>${index}</td>
-              <td>${data.orderId}</td>
+              <td>${data.bookingId}</td>
               <td>${data.name}</td>
               <td>
                 <div>${data.service}</div>

@@ -235,13 +235,24 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="pages/customers/registered-customers.html">
+            <a class="nav-link" data-toggle="collapse" href="#ui-customer" aria-expanded="false"
+              aria-controls="ui-basic">
               <i class="icon-head menu-icon"></i>
               <span class="menu-title">Customers</span>
-
+              <i class="menu-arrow"></i>
             </a>
-
+            <div class="collapse" id="ui-customer">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/customers/registered-customers.html">Customers</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/customers/customer_loyalty.html">Customer loyalty</a>
+                </li>
+              </ul>
+            </div>
           </li>
+
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
               aria-controls="ui-basic">
@@ -251,7 +262,8 @@
             </a>
             <div class="collapse" id="ui-message">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="./pages/message/view_messages.html">View messages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="./pages/message/view_messages.html">View messages</a>
+                </li>
                 <li class="nav-item"> <a class="nav-link" href="./send-bc-message.html">Send Message</a></li>
                 <li class="nav-item"> <a class="nav-link" href="./pages/feedbacks/feedbacks.html">Feed backs</a></li>
                 <!-- <li class="nav-item"> <a class="nav-link" href="./live_chat.html">Live chat</a></li> -->
@@ -277,7 +289,7 @@
               <div class="row">
                 <div class="col-12 col-xl-8 mb-4 mb-xl-0">
                   <h3 class="font-weight-bold">Welcome Admin</h3>
-                  <h6 class="font-weight-normal mb-0">All systems are running smoothly! <span class="text-primary"
+                  <h6 class="font-weight-normal mb-0">All systems are running smoothly! <span class="text-danger"
                       id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
                 </div>
                 <div class="col-12 col-xl-4">
@@ -615,7 +627,7 @@
       getDocs,
       onSnapshot,
       updateDoc,
-      query, where, orderBy,serverTimestamp
+      query, where, orderBy, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
     // TODO: Add SDKs for Firebase products that you want to use
@@ -706,25 +718,23 @@
               </td>
              
               <td>
-                <i
-                  class="icon-ellipsis"
-                  id="dropdownMenuSplitButton1" data-toggle="${data.status == "Completed" ? "" : "dropdown"}" aria-haspopup="true" aria-expanded="false"
-                ></i>
-                <div
-                  class="dropdown-menu"
-                  aria-labelledby="dropdownMenuSplitButton1"
-                >
-                  <h6 class="dropdown-header">Action</h6>
-                  <a class="dropdown-item accept-action" data-docid="${doc.id
-              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Accept</a>
-                  <a class="dropdown-item complete-action" data-docid="${doc.id
-              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Complete</a>
-                  <a class="dropdown-item cancel-action" data-docid="${doc.id
-              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Cancel</a>
-                  <a class="dropdown-item reject-action" data-docid="${doc.id
-              }" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Reject</a>
-                
-                </div>
+                <i class="${data.status === 'Completed' || data.status === 'Cancelled' ? '' :'icon-ellipsis'}" id="dropdownMenuSplitButton1"
+    data-toggle="${data.status === 'Completed' || data.status === 'Cancelled' ? '' : 'dropdown'}"
+    aria-haspopup="true" aria-expanded="false"
+  ></i>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+    <h6 class="dropdown-header">Action</h6>
+    ${data.status === 'New' ? `
+      <a class="dropdown-item accept-action" data-docid="${doc.id}" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Accept</a>
+    ` : ''}
+    ${data.status === 'Completed' ? `
+      <a class="dropdown-item complete-action" data-docid="${doc.id}" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Complete</a>
+    ` : ''}
+    ${data.status === 'New' || data.status === 'Completed' ? `
+      <a class="dropdown-item cancel-action" data-docid="${doc.id}" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Cancel</a>
+    ` : ''}
+  </div>
+
               </td>
             </tr>`;
 
@@ -738,7 +748,7 @@
               const docId = event.target.dataset.docid;
               const serviceName = event.target.dataset.servicename;
               const customerEmail = event.target.dataset.customeremail;
-              acceptFunction(docId,serviceName,customerEmail);
+              acceptFunction(docId, serviceName, customerEmail);
             });
           });
 
@@ -749,7 +759,7 @@
               const docId = event.target.dataset.docid;
               const serviceName = event.target.dataset.servicename;
               const customerEmail = event.target.dataset.customeremail;
-              completeFunction(docId,serviceName,customerEmail);
+              completeFunction(docId, serviceName, customerEmail);
             });
           });
 
@@ -760,25 +770,16 @@
               const docId = event.target.dataset.docid;
               const serviceName = event.target.dataset.servicename;
               const customerEmail = event.target.dataset.customeremail;
-              cancelFunction(docId,serviceName,customerEmail);
+              cancelFunction(docId, serviceName, customerEmail);
             });
           });
 
-          // Add event listener to reject dropdown item
-          const rejectItems = document.querySelectorAll(".reject-action");
-          rejectItems.forEach((item) => {
-            item.addEventListener("click", (event) => {
-              const docId = event.target.dataset.docid;
-              const serviceName = event.target.dataset.servicename;
-              const customerEmail = event.target.dataset.customeremail;
-              rejectFunction(docId,serviceName,customerEmail);
-            });
-          });
+         
         });
 
 
 
-        function acceptFunction(docId,serviceName,customerEmail) {
+        function acceptFunction(docId, serviceName, customerEmail) {
           // Execute your accept function here with the docId parameter
           console.log("Accept function executed for docId", docId);
 
@@ -796,16 +797,16 @@
             .catch((error) => {
               console.log(error);
             });
-            addDoc(collection(database, "appNotification"), {
+          addDoc(collection(database, "appNotification"), {
             message: `Your booking for ${serviceName} has been accepted.`,
-            email:customerEmail,
-            status:"New",
+            email: customerEmail,
+            status: "New",
             timestamp: serverTimestamp(),
           });
-            
+
         }
 
-        function completeFunction(docId,serviceName,customerEmail) {
+        function completeFunction(docId, serviceName, customerEmail) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
           const docRef = doc(database, "bookings", docId);
@@ -822,14 +823,14 @@
             .catch((error) => {
               console.log(error);
             });
-            addDoc(collection(database, "appNotification"), {
+          addDoc(collection(database, "appNotification"), {
             message: `Your booking for ${serviceName} has been set to completed.`,
-            email:customerEmail,
-            status:"New",
+            email: customerEmail,
+            status: "New",
             timestamp: serverTimestamp(),
           });
         }
-        function cancelFunction(docId,serviceName,customerEmail) {
+        function cancelFunction(docId, serviceName, customerEmail) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
           const docRef = doc(database, "bookings", docId);
@@ -846,37 +847,14 @@
             .catch((error) => {
               console.log(error);
             });
-            addDoc(collection(database, "appNotification"), {
+          addDoc(collection(database, "appNotification"), {
             message: `Your booking for ${serviceName} has been canceled.`,
-            email:customerEmail,
-            status:"New",
+            email: customerEmail,
+            status: "New",
             timestamp: serverTimestamp(),
           });
         }
-        function rejectFunction(docId,serviceName,customerEmail) {
-          // Execute your complete function here with the docId parameter
-          console.log("Complete function executed for docId", docId);
-          const docRef = doc(database, "bookings", docId);
-
-          const data = {
-            status: "Rejected",
-          };
-          updateDoc(docRef, data)
-            .then((docRef) => {
-              console.log(
-                "A New Document Field has been added to an existing document"
-              );
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-            addDoc(collection(database, "appNotification"), {
-            message: `Your booking for ${serviceName} has been declined.`,
-            email:customerEmail,
-            status:"New",
-            timestamp: serverTimestamp(),
-          });
-        }
+   
       } catch (error) {
         console.log(error);
       }
@@ -954,13 +932,13 @@
             <td>${data.paymentStatus}</td>
           
             <td>
-            <label class="badge ${data.orderStatus == "Accepted"
-                ? "badge-info"
+            <label class="badge ${data.orderStatus == "Confirmed"
+                ? "badge-success"
                 : data.orderStatus == "Cancelled"
                   ? "badge-danger"
                   : data.orderStatus == "Completed"
                     ? "badge-dark"
-                    : "badge-success"
+                    : "badge-info"
               }" id="statusLabel"
               >${data.orderStatus}</label
             >
@@ -971,25 +949,22 @@
           
            
             <td>
-              <i
-                class="icon-ellipsis"
-                id="dropdownMenuSplitButton1" data-toggle="${data.orderStatus == "Completed" || data.orderStatus == "Cancelled" ? "" : "dropdown"
-              }" aria-haspopup="true" aria-expanded="false"
-              ></i>
-              <div
-                class="dropdown-menu"
-                aria-labelledby="dropdownMenuSplitButton1"
-              >
-                <h6 class="dropdown-header">Action</h6>
-                <a class="dropdown-item accept-action" data-docid="${doc.id
-              }">Accept</a>
-                <a class="dropdown-item complete-action" data-docid="${doc.id
-              }">Complete</a>
-                <a class="dropdown-item cancel-action" data-docid="${doc.id
-              }">Cancel</a>
-
-              
-              </div>
+            <i class="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' :'icon-ellipsis'}" id="dropdownMenuSplitButton1"
+    data-toggle="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'dropdown'}"
+    aria-haspopup="true" aria-expanded="false"
+  ></i>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+    <h6 class="dropdown-header">Action</h6>
+    ${data.orderStatus === 'New' ? `
+      <a class="dropdown-item accept-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}">Confirm</a>
+    ` : ''}
+    ${data.orderStatus === 'Confirmed' ? `
+      <a class="dropdown-item complete-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" data-itemprice="${doc.data().productPrice}">Complete</a>
+    ` : ''}
+    ${data.orderStatus === 'New' || data.orderStatus === 'Confirmed' ? `
+      <a class="dropdown-item cancel-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" >Cancel</a>
+    ` : ''}
+  </div>
             </td>
           </tr>`;
 
@@ -1001,7 +976,10 @@
           acceptItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              acceptFunction(docId);
+              const itemName = event.target.dataset.itemname;
+              const customaEmail = event.target.dataset.customeremail;
+
+              confirmOrderFunction(docId, customaEmail, itemName);
             });
           });
 
@@ -1010,7 +988,10 @@
           completeItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              completeFunction(docId);
+              const itemName = event.target.dataset.itemname;
+              const customaEmail = event.target.dataset.customeremail;
+              const itemPrice = event.target.dataset.itemprice;
+              completeFunction(docId, customaEmail, itemName,itemPrice);
             });
           });
 
@@ -1019,30 +1000,28 @@
           cancelItems.forEach((item) => {
             item.addEventListener("click", (event) => {
               const docId = event.target.dataset.docid;
-              cancelFunction(docId);
+              const itemName = event.target.dataset.itemname;
+              const customaEmail = event.target.dataset.customeremail;
+              cancelFunction(docId, customaEmail, itemName);
             });
           });
 
-          // Add event listener to reject dropdown item
-          const rejectItems = document.querySelectorAll(".reject-action");
-          rejectItems.forEach((item) => {
-            item.addEventListener("click", (event) => {
-              const docId = event.target.dataset.docid;
-              rejectFunction(docId);
-            });
-          });
+
         });
 
 
 
-        function acceptFunction(docId) {
+        function confirmOrderFunction(docId, customerEmail, productName) {
           // Execute your accept function here with the docId parameter
-          console.log("Accept function executed for docId", docId);
+          // console.log("Confirm function executed for docId", docId);
+
+          console.log(customerEmail);
+          console.log(productName);
 
           const docRef = doc(database, "orders", docId);
 
           const data = {
-            orderStatus: "Accepted",
+            orderStatus: "Confirmed",
           };
           updateDoc(docRef, data)
             .then((docRef) => {
@@ -1054,11 +1033,16 @@
               console.log(error);
             });
 
-      
+          addDoc(collection(database, "appNotification"), {
+            message: `Your order for ${productName} has been confirm, our represenative will contact you soon.`,
+            email: customerEmail,
+            status: "New",
+            timestamp: serverTimestamp(),
+          });
 
-        
+
           addDoc(collection(database, "log"), {
-            comment: "Booking status has been updated to accepted.",
+            comment: "Order status has been updated to comfirmed.",
 
             timestamp: serverTimestamp(),
           })
@@ -1071,13 +1055,15 @@
             });
         }
 
-        function completeFunction(docId) {
+        function completeFunction(docId, customerEmail, productName,productPrice) {
           // Execute your complete function here with the docId parameter
-          console.log("Complete function executed for docId", docId);
+          console.log("Complete function executed for docId", productPrice);
           const docRef = doc(database, "orders", docId);
 
           const data = {
             orderStatus: "Completed",
+            paymentStatus: "Paid",
+            amountPaid:productPrice,
           };
           updateDoc(docRef, data)
             .then((docRef) => {
@@ -1088,6 +1074,13 @@
             .catch((error) => {
               console.log(error);
             });
+
+          addDoc(collection(database, "appNotification"), {
+            message: `Your order for ${productName} has been set to completed.`,
+            email: customerEmail,
+            status: "New",
+            timestamp: serverTimestamp(),
+          });
 
           addDoc(collection(database, "log"), {
             comment: "order status has been update to completed.",
@@ -1102,7 +1095,7 @@
               // document.getElementById("productForm").reset();
             });
         }
-        function cancelFunction(docId) {
+        function cancelFunction(docId, customerEmail, productName) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
           const docRef = doc(database, "orders", docId);
@@ -1119,6 +1112,13 @@
             .catch((error) => {
               console.log(error);
             });
+
+          addDoc(collection(database, "appNotification"), {
+            message: `Your order for ${productName} has been cancelled, please contact our support for more info`,
+            email: customerEmail,
+            status: "New",
+            timestamp: serverTimestamp(),
+          });
 
           addDoc(collection(database, "log"), {
             comment: "Order status has been updated to cancelled.",
@@ -1230,8 +1230,8 @@
               notificationLink.classList.add('dropdown-item', 'preview-item');
               if (notification.type == "service") {
                 notificationLink.setAttribute('href', './pages/bookings/booking-page.html');
-              } else if(notification.type == "feedback") {
-                notificationLink.setAttribute('href', './feedbacks.html');
+              } else if (notification.type == "feedback") {
+                notificationLink.setAttribute('href', './pages/feedbacks/feedbacks.html');
               } else {
                 notificationLink.setAttribute('href', './pages/orders/orders.html');
               }
@@ -1467,7 +1467,7 @@
               
              
               <td>
-                <a href="./pages/inventory/dashboard.html" style="text-decoration:none;color:black">
+                <a href="./pages/inventory/viewstock-dashboard.html" style="text-decoration:none;color:black">
                 <i
                   class="icon-eye"
                  aria-haspopup="true" aria-expanded="false"

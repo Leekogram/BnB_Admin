@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>BnB Admin/Customers loyalty</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="../../vendors/feather/feather.css" />
+  <link rel="stylesheet" href="../../vendors/ti-icons/css/themify-icons.css" />
+  <link rel="stylesheet" href="../../vendors/css/vendor.bundle.base.css" />
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+     <!-- Plugin css for this page -->
+     <link rel="stylesheet" href="../../vendors/select2/select2.min.css" />
+     <link
+       rel="stylesheet"
+       href="../../vendors/select2-bootstrap-theme/select2-bootstrap.min.css"
+     />
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../../css/vertical-layout-light/style.css" />
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../../images/favicon.ico" />
+  <style>
+     input[type="date"] {
+      border: 1px solid lightgray;
+      padding: 5px;
+      border-radius: 5px;
+    }
+    #detailedReports {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    #detailedReports.active {
+      max-height: 1000px;
+      /* Adjust this value as needed */
+    }
+
+
+    .clickable-row {
+      cursor: pointer;
+    }
+
+    .clickable-row:hover {
+      background-color: #f2f2f2;
+    }
+
+    #loader {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      z-index: 9999;
+    }
+
+    .spinner {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #000;
+      border-top-color: #FFC100;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:../../partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img src="../../images/logo.png" class="mr-2"
+            alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo.png"
+            alt="logo" /></a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="icon-menu"></span>
+        </button>
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item nav-search d-none d-lg-block">
+            <div class="input-group">
+              <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+                <span class="input-group-text" id="search">
+                  <i class="icon-search"></i>
+                </span>
+              </div>
+              <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now"
+                aria-label="search" aria-describedby="search" />
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+              data-toggle="dropdown">
+              <i class="icon-bell mx-0"></i>
+              <span class="count"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+              aria-labelledby="notificationDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">
+                Notifications
+              </p>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-success">
+                    <i class="ti-info-alt mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">
+                    Application Error
+                  </h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    Just now
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-warning">
+                    <i class="ti-settings mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">Settings</h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    Private message
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <div class="preview-icon bg-info">
+                    <i class="ti-user mx-0"></i>
+                  </div>
+                </div>
+                <div class="preview-item-content">
+                  <h6 class="preview-subject font-weight-normal">
+                    New user registration
+                  </h6>
+                  <p class="font-weight-light small-text mb-0 text-muted">
+                    2 days ago
+                  </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+              <img src="../../images/faces/face28.jpg" alt="profile" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+
+              <a class="dropdown-item">
+                <i class="ti-power-off text-primary"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-toggle="offcanvas">
+          <span class="icon-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+
+
+      <!-- partial -->
+      <!-- partial:../../partials/_sidebar.html -->
+      <nav class="sidebar  sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../../index.html">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../bookings/booking-page.html">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Bookings</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../orders/orders.html">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Orders</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+              <i class="icon-layout menu-icon"></i>
+              <span class="menu-title">Inventory</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="../inventory/viewstock-dashboard.html">View Stock</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../inventory/add-item.html">Add Stock</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../inventory/update-stock.html">Update Stock</a>
+                </li>
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-contract menu-icon"></i>
+              <span class="menu-title">Services</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-service">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="../service/service-dashboard.html">View Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../service/add-service.html">Add Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../service/update-service.html">Update Service</a>
+                </li>
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-customer" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-head menu-icon"></i>
+              <span class="menu-title">Customers</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-customer">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="./registered-customers.html">Customers</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./customer_loyalty.html">Customer loyalty</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-columns menu-icon"></i>
+              <span class="menu-title">Message</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-message">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../message/view_messages.html">View messages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../../send-bc-message.html">Send Message</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../feedbacks/feedbacks.html">Feed backs</a></li>
+
+              </ul>
+            </div>
+          </li>
+          <!--   <li class="nav-item">
+              <a class="nav-link" href="" >
+                <i class="icon-paper menu-icon"></i>
+                <span class="menu-title">FeedBacks</span>
+  
+              </a>
+            
+            </li> -->
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="row">
+                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                  <h3 class="font-weight-bold ">Welcome to Customer Loyalty Programm</h3>
+                  <h6 class="font-weight-normal mb-0 ">Here you can see how much each and every customer has spent in
+                    every quarter of the year.</h6>
+                </div>
+                <!--   <div class="col-12 col-xl-4">
+                 <div class="justify-content-end d-flex">
+                  <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                    <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                     <i class="mdi mdi-calendar"></i><span id="today"></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
+                      <a class="dropdown-item" href="#" data-start="01-01" data-end="03-31">January - March</a>
+                      <a class="dropdown-item" href="#" data-start="04-01" data-end="06-30">April - June</a>
+                      <a class="dropdown-item" href="#" data-start="07-01" data-end="09-30">July - September</a>
+                      <a class="dropdown-item" href="#" data-start="10-01" data-end="12-31">October - December</a>
+                      
+                    </div>
+                  </div>
+                 </div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card" id="detailedReports">
+              <div class="card position-relative">
+                <div class="card-body">
+                  <div class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <div class="row">
+                          <div class="col-md-12 col-xl-3 d-flex flex-column justify-content-start">
+                            <div class="ml-xl-4 mt-3">
+                              <p class="card-title">Customer Report</p>
+                              <h1 class="text-black">&#8358 <span class="text-black" id="totalSpent"></span></h1>
+                              <h3 class="font-weight-500 mb-xl-4 text-primary">Spent</h3>
+                              <p class="mb-2 mb-xl-0">Showing total amount spent by this custom</p>
+                            </div>
+                          </div>
+                          <div class="col-md-12 col-xl-9">
+                            <div class="row">
+                              <div class="col-md-10 ">
+                                <div class="table-responsive mb-3 mb-md-0 mt-3">
+                                  <table class="table table-borderless report-table">
+                                    <tr>
+                                      <td class="text-muted">Total order</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                                            aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" id="orderProgress">
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <h5 class="font-weight-bold mb-0" id="totalOrder"></h5>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">Total bookings</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                                            aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"
+                                            id="bookingProgress"></div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <h5 class="font-weight-bold mb-0" id="totalBookings"></h5>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">Total completed order</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-success" role="progressbar" style="width: 0%"
+                                            aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"
+                                            id="completedOrderProgress"></div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <h5 class="font-weight-bold mb-0" id="totalCompletedOrder"></h5>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">Total completed booking</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-success" role="progressbar" style="width: 0%"
+                                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                            id="completedBookingProgress"></div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <h5 class="font-weight-bold mb-0" id="totalCompletedBookings"></h5>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">Total pending order</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"
+                                            aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"
+                                            id="pendingOrderProgress"></div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <h5 class="font-weight-bold mb-0" id="totalPendingOrders"></h5>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="text-muted">Total pending booking</td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"
+                                            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
+                                            id="pendingBookingProgress"></div>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <h5 class="font-weight-bold mb-0" id="totalPendingBookings"></h5>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </div>
+                              </div>
+                              <!--    <div class="col-md-6 mt-3">
+                                <canvas id="north-america-chart"></canvas>
+                                <div id="north-america-legend"></div>
+                              </div> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+
+                <div class="card-body">
+               
+
+                  <h4 class="card-title">Customer List</h4>
+                  <label for="start-date">From:</label>
+                  <input type="date" id="start-date">
+
+                  <label for="end-date">To:</label>
+                  <input type="date" id="end-date">
+
+                  <button id="submit-btn">Submit</button>
+                  <p class="card-description">
+                    <!-- Add class <code>.table-striped</code> -->
+                  </p>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>S/n</th>
+                          <th>Customer name</th>
+                          <th>Email</th>
+                          <th>Phone number</th>
+                          <th>Address</th>
+                          <th>Registered on</th>
+
+                          <th>Total Money Spent</th>
+                        </tr>
+                      </thead>
+                      <tbody id="customerTable">
+
+                        <div id="loader">
+                          <div class="spinner"></div>
+                        </div>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:../../partials/_footer.html -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <span
+                id="currentYear"></span>.
+              All rights reserved.</span>
+
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="../../vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="../../js/off-canvas.js"></script>
+  <script src="../../js/hoverable-collapse.js"></script>
+  <script src="../../js/template.js"></script>
+  <script src="../../js/settings.js"></script>
+  <script src="../../js/todolist.js"></script>
+  <script src="../../js/select2.js"></script>
+  <script src="../../js/firebase/manage_customers.js" type="module"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <!-- End custom js for this page-->
+</body>
+
+</html>

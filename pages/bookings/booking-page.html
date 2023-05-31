@@ -23,6 +23,35 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="../../images/favicon.ico" />
     <style>
+
+       /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    #notSpan {
+      visibility: hidden;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      border-radius: 30px;
+    }
       #loader {
         display: none;
         position: absolute;
@@ -216,6 +245,17 @@
           </button>
         </div>
       </nav>
+
+        <!-- Modal -->
+    <div id="sign-out-modal" class="modal">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <button class="btn btn-danger btn-rounded align-self-center mb-3 w-50" id="confirm-sign-out-btn">Yes, sign me
+          out</button>
+        <button class="btn  btn-success btn-rounded align-self-center w-50" id="cancel-sign-out-btn">Cancel</button>
+      </div>
+    </div>
+    <!-- partial -->
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
     
@@ -290,12 +330,22 @@
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../customers/registered-customers.html">
+              <a class="nav-link" data-toggle="collapse" href="#ui-customer" aria-expanded="false"
+                aria-controls="ui-basic">
                 <i class="icon-head menu-icon"></i>
                 <span class="menu-title">Customers</span>
-  
+                <i class="menu-arrow"></i>
               </a>
-  
+              <div class="collapse" id="ui-customer">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../customers/registered-customers.html">Customers</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../customers/customer_loyalty.html">Customer loyalty</a>
+                  </li>
+                </ul>
+              </div>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
@@ -308,6 +358,7 @@
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="../message/view_messages.html">View messages</a></li>
                   <li class="nav-item"> <a class="nav-link" href="../../send-bc-message.html">Send Message</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="../feedbacks/feedbacks.html">Feed backs</a></li>
   
                 </ul>
               </div>
