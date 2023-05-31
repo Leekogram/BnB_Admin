@@ -39,44 +39,37 @@ const database = getFirestore(app);
 
 const colRef = collection(database, "users");
 
-// Add an event listener to the dropdown items
-const dropdownItems = document.querySelectorAll(".dropdown-item");
-dropdownItems.forEach((item) => {
-  item.addEventListener("click", (event) => {
-    const start = event.target.dataset.start;
-    const end = event.target.dataset.end;
-    fetchCustomerData(start, end);
-  });
+
+
+
+
+
+// Get the start date and end date input fields
+const startDateInput = document.getElementById('start-date');
+const endDateInput = document.getElementById('end-date');
+
+function formatDateInput(dateInput) {
+  const selectedDate = new Date(dateInput.value);
+  const formattedDate = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}/${selectedDate.getFullYear()}`;
+  return formattedDate;
+}
+// Event handler for the end date input field
+endDateInput.addEventListener('change', () => {
+  const startDateValue = formatDateInput(startDateInput);
+  const endDateValue = formatDateInput(endDateInput);
+
+  const startDate = new Date(startDateValue);
+  const endDate = new Date(endDateValue);
+    
+const startDateTimestamp =Timestamp.fromDate(startDate);
+const endDateTimestamp = Timestamp.fromDate(endDate);
+
+    
+  getCustomer(startDateTimestamp, endDateTimestamp);
 });
 
-// Fetch customer data based on the selected date range
-async function fetchCustomerData(start, end) {
-  console.log(start);
-  console.log(end);
-  try {
-    const startDate = new Date(`${start} 00:00:00`);
-    const endDate = new Date(`${end} 23:59:59`);
-
-    const startTimestamp = Timestamp.fromDate(startDate);
-    const endTimestamp = Timestamp.fromDate(endDate);
-
-    const q = query(colRef, where("createdDateTime", ">=", startTimestamp), where("createdDateTime", "<=", endTimestamp), orderBy("createdDateTime", "desc"));
-
-    getCustomer();
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-
-// Add an event listener to the end Date 
-const endDate = document.getElementById('end-date');
-const startDateValue = document.getElementById('start-date').value;
-const endDateValue = endDate.value;
-endDate.addEventListener('click', getCustomer(startDateValue,endDateValue));
-
 async function getCustomer(startDate,endDate) {
-  console.log('i have been called');
+  console.log('i have been called',+startDate);
   const currentYear = new Date().getFullYear();
 
   const today = new Date();
@@ -196,7 +189,7 @@ async function getCustomer(startDate,endDate) {
         row.addEventListener("click", () => {
           const uEmail = row.getAttribute("data-useremail");
           // console.log(uEmail);
-          showUserDetails(uEmail);
+          showUserDetails(uEmail,startDate,endDate);
         });
       });
 
@@ -208,7 +201,7 @@ async function getCustomer(startDate,endDate) {
 }
 
 
-async function showUserDetails(userEmail) {
+async function showUserDetails(userEmail,startDate,endDate) {
   // const userDetailsDiv = document.getElementById("userDetails");
   // userDetailsDiv.innerHTML = ""; // Clear previous content
   const detailedReports = document.getElementById('detailedReports');
@@ -217,8 +210,10 @@ async function showUserDetails(userEmail) {
   try {
     // Retrieve user details from the Firestore collections (orders and bookings)
     const [ordersSnapshot, bookingsSnapshot] = await Promise.all([
-      getDocs(query(collection(database, "orders"), where("customerEmail", "==", userEmail))),
-      getDocs(query(collection(database, "bookings"), where("email", "==", userEmail)))
+      getDocs(query(collection(database, "orders"), where("customerEmail", "==", userEmail), where('timestamp', '>=', startDate),
+      where('timestamp', '<=', endDate))),
+      getDocs(query(collection(database, "bookings"), where("email", "==", userEmail),where('timestamp', '>=', startDate),
+      where('timestamp', '<=', endDate)))
     ]);
 
     const userDetails = {};
@@ -318,9 +313,10 @@ function updateProgressBars(totalOrder, totalBookings, totalCompletedOrder, tota
 }
 
 
-// Fetch customer data with default date range
-const defaultStart = "01-01";
-const defaultEnd = "03-31";
-//  fetchCustomerData(defaultStart, defaultEnd);
+// Calculate the current month's start and end dates
 
-window.onload = getCustomer();
+const today = new Date();
+const start = new Date(today.getFullYear(), today.getMonth(),0 );
+const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+window.onload = getCustomer(start,end);
