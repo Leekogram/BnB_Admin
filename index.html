@@ -555,7 +555,6 @@
                             <tr>
                               <th>S/n</th>
                               <th>Customer name</th>
-
                               <th>Phone number</th>
                               <th>Email</th>
 
@@ -627,7 +626,7 @@
       getDocs,
       onSnapshot,
       updateDoc,
-      query, where, orderBy, serverTimestamp
+      query, where, orderBy, serverTimestamp, getDoc
     } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
     // TODO: Add SDKs for Firebase products that you want to use
@@ -703,22 +702,22 @@
               <td>${data.email}</td>
              
               <td>
-                <label class="badge ${data.status == "Pending"
-                ? "badge-warning"
+                <label class="badge ${data.status == "New"
+                ? "badge-info"
                 : data.status == "Accepted"
                   ? "badge-success"
                   : data.status == "Cancelled"
-                    ? "badge-primary"
+                    ? "badge-danger"
                     : data.status == "Completed"
                       ? "badge-dark"
-                      : "badge-danger"
+                      : "badge-secondary"
               }" id="statusLabel"
                   >${data.status}</label
                 >
               </td>
              
               <td>
-                <i class="${data.status === 'Completed' || data.status === 'Cancelled' ? '' :'icon-ellipsis'}" id="dropdownMenuSplitButton1"
+                <i class="${data.status === 'Completed' || data.status === 'Cancelled' ? '' : 'icon-ellipsis'}" id="dropdownMenuSplitButton1"
     data-toggle="${data.status === 'Completed' || data.status === 'Cancelled' ? '' : 'dropdown'}"
     aria-haspopup="true" aria-expanded="false"
   ></i>
@@ -727,10 +726,10 @@
     ${data.status === 'New' ? `
       <a class="dropdown-item accept-action" data-docid="${doc.id}" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Accept</a>
     ` : ''}
-    ${data.status === 'Completed' ? `
+    ${data.status === 'Accepted' ? `
       <a class="dropdown-item complete-action" data-docid="${doc.id}" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Complete</a>
     ` : ''}
-    ${data.status === 'New' || data.status === 'Completed' ? `
+    ${data.status === 'New' || data.status === 'Accepted' ? `
       <a class="dropdown-item cancel-action" data-docid="${doc.id}" data-servicename="${doc.data().service}" data-customeremail="${doc.data().email}">Cancel</a>
     ` : ''}
   </div>
@@ -748,7 +747,12 @@
               const docId = event.target.dataset.docid;
               const serviceName = event.target.dataset.servicename;
               const customerEmail = event.target.dataset.customeremail;
-              acceptFunction(docId, serviceName, customerEmail);
+
+              // Show confirmation alert
+              const confirmation = window.confirm("Do you really want to accept this booking?");
+              if (confirmation) {
+                acceptFunction(docId, serviceName, customerEmail);
+              }
             });
           });
 
@@ -759,7 +763,12 @@
               const docId = event.target.dataset.docid;
               const serviceName = event.target.dataset.servicename;
               const customerEmail = event.target.dataset.customeremail;
-              completeFunction(docId, serviceName, customerEmail);
+
+              // Show confirmation alert
+              const confirmation = window.confirm("Do you really want to set this booking status to completed?");
+              if (confirmation) {
+                completeFunction(docId, serviceName, customerEmail);
+              }
             });
           });
 
@@ -770,11 +779,15 @@
               const docId = event.target.dataset.docid;
               const serviceName = event.target.dataset.servicename;
               const customerEmail = event.target.dataset.customeremail;
-              cancelFunction(docId, serviceName, customerEmail);
+              // Show confirmation alert
+              const confirmation = window.confirm("Do you really want to cancel this booking?");
+              if (confirmation) {
+                cancelFunction(docId, serviceName, customerEmail);
+              }
             });
           });
 
-         
+
         });
 
 
@@ -830,6 +843,10 @@
             timestamp: serverTimestamp(),
           });
         }
+
+
+
+
         function cancelFunction(docId, serviceName, customerEmail) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
@@ -854,7 +871,7 @@
             timestamp: serverTimestamp(),
           });
         }
-   
+
       } catch (error) {
         console.log(error);
       }
@@ -906,9 +923,6 @@
 
       try {
 
-
-
-
         const q = query(orderRef, orderBy("timestamp", "desc"));
 
         onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
@@ -949,7 +963,7 @@
           
            
             <td>
-            <i class="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' :'icon-ellipsis'}" id="dropdownMenuSplitButton1"
+            <i class="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'icon-ellipsis'}" id="dropdownMenuSplitButton1"
     data-toggle="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'dropdown'}"
     aria-haspopup="true" aria-expanded="false"
   ></i>
@@ -959,7 +973,7 @@
       <a class="dropdown-item accept-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}">Confirm</a>
     ` : ''}
     ${data.orderStatus === 'Confirmed' ? `
-      <a class="dropdown-item complete-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" data-itemprice="${doc.data().productPrice}">Complete</a>
+      <a class="dropdown-item complete-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" data-itemprice="${doc.data().productPrice}" data-qty="${doc.data().productQuantity}">Complete</a>
     ` : ''}
     ${data.orderStatus === 'New' || data.orderStatus === 'Confirmed' ? `
       <a class="dropdown-item cancel-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" >Cancel</a>
@@ -979,7 +993,12 @@
               const itemName = event.target.dataset.itemname;
               const customaEmail = event.target.dataset.customeremail;
 
-              confirmOrderFunction(docId, customaEmail, itemName);
+              // Show confirmation alert
+              const confirmation = window.confirm("Do you really want to confirm this order?");
+              if (confirmation) {
+                confirmOrderFunction(docId, customaEmail, itemName);
+              }
+
             });
           });
 
@@ -991,7 +1010,13 @@
               const itemName = event.target.dataset.itemname;
               const customaEmail = event.target.dataset.customeremail;
               const itemPrice = event.target.dataset.itemprice;
-              completeFunction(docId, customaEmail, itemName,itemPrice);
+              const qtyPurchased = event.target.dataset.qty;
+              // Show confirmation alert
+              const confirmation = window.confirm("Do you really want to set this order status to completed?");
+              if (confirmation) {
+                completeFunction(docId, customaEmail, itemName, itemPrice, qtyPurchased);
+              }
+
             });
           });
 
@@ -1002,7 +1027,12 @@
               const docId = event.target.dataset.docid;
               const itemName = event.target.dataset.itemname;
               const customaEmail = event.target.dataset.customeremail;
-              cancelFunction(docId, customaEmail, itemName);
+              // Show confirmation alert
+              const confirmation = window.confirm("Do you really want to cancel this order?");
+              if (confirmation) {
+                cancelFunction(docId, customaEmail, itemName);
+              }
+
             });
           });
 
@@ -1054,22 +1084,51 @@
               // document.getElementById("productForm").reset();
             });
         }
+        function completeFunction(docId, customerEmail, productName, productPrice, quantityPurchased) {
+  // Execute your complete function here with the docId parameter
+  console.log("Complete function executed for docId", docId);
+  const docRef = doc(database, "orders", docId);
+  const productRef = collection(database, "products");
 
-        function completeFunction(docId, customerEmail, productName,productPrice) {
-          // Execute your complete function here with the docId parameter
-          console.log("Complete function executed for docId", productPrice);
-          const docRef = doc(database, "orders", docId);
+  // Query the products collection for a document with the matching field
+  const q = query(productRef, where("productName", "==", productName));
+
+  // Get the current quantity of the product
+  getDocs(q)
+    .then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const productDoc = querySnapshot.docs[0].data();
+        const currentQuantity = parseInt(productDoc.productQty);
+
+        // Convert quantityPurchased to a number
+        const boughtQuantity = parseInt(quantityPurchased);
+
+        // Check if the current quantity is less than the quantity being bought
+        if (currentQuantity < boughtQuantity) {
+          // Alert the user to add more quantity or purchase a smaller amount
+          alert("The current quantity in stock is insufficient. Please add more quantity or ask the customer to purchase a smaller amount.");
+        } else {
+          // Calculate the remaining quantity
+          const remainingQuantity = currentQuantity - boughtQuantity;
+
+          // Update the productQty field in the matched document
+          const productDocRef = doc(database, "products", querySnapshot.docs[0].id);
+          updateDoc(productDocRef, { productQty: remainingQuantity })
+            .then(() => {
+              console.log("Product quantity updated successfully.");
+            })
+            .catch((error) => {
+              console.log("Error updating product quantity:", error);
+            });
 
           const data = {
             orderStatus: "Completed",
             paymentStatus: "Paid",
-            amountPaid:productPrice,
+            amountPaid: productPrice,
           };
           updateDoc(docRef, data)
-            .then((docRef) => {
-              console.log(
-                "A New Document Field has been added to an existing document"
-              );
+            .then(() => {
+              console.log("A new document field has been added to an existing document.");
             })
             .catch((error) => {
               console.log(error);
@@ -1083,18 +1142,29 @@
           });
 
           addDoc(collection(database, "log"), {
-            comment: "order status has been update to completed.",
-
+            comment: "Order status has been updated to completed.",
             timestamp: serverTimestamp(),
           })
-            .then((docRef) => {
+            .then(() => {
               console.log("Order has been updated successfully");
             })
             .catch((error) => {
               console.log(error);
-              // document.getElementById("productForm").reset();
             });
         }
+      } else {
+        console.log("Product does not exist.");
+      }
+    })
+    .catch((error) => {
+      console.log("Error retrieving product:", error);
+    });
+}
+
+
+
+
+
         function cancelFunction(docId, customerEmail, productName) {
           // Execute your complete function here with the docId parameter
           console.log("Complete function executed for docId", docId);
@@ -1133,37 +1203,7 @@
               // document.getElementById("productForm").reset();
             });
         }
-        function rejectFunction(docId) {
-          // Execute your complete function here with the docId parameter
-          console.log("Complete function executed for docId", docId);
-          const docRef = doc(database, "orders", docId);
 
-          const data = {
-            orderStatus: "Rejected",
-          };
-          updateDoc(docRef, data)
-            .then((docRef) => {
-              console.log(
-                "A New Document Field has been added to an existing document"
-              );
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-
-          addDoc(collection(database, "log"), {
-            comment: "Order status has been update to rejected.",
-
-            timestamp: serverTimestamp(),
-          })
-            .then((docRef) => {
-              console.log("Product has been updated successfully");
-            })
-            .catch((error) => {
-              console.log(error);
-              // document.getElementById("productForm").reset();
-            });
-        }
       } catch (error) {
         console.log(error);
       }
@@ -1480,11 +1520,7 @@
           });
           tableRow.innerHTML = rows;
 
-
-
         });
-
-
 
       } catch (error) {
         console.log(error);
@@ -1506,10 +1542,6 @@
             document.getElementById('todayaddedProducts').innerHTML = todaysAddedProdCount
 
           });
-
-
-
-
 
       } catch (error) {
         console.log(error);

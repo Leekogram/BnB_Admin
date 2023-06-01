@@ -22,6 +22,34 @@
     <link rel="shortcut icon" href="../../images/favicon.ico" />
     <link rel="stylesheet" href="../../css/alert-style.css" />
     <style>
+          /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    #notSpan {
+      visibility: hidden;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      border-radius: 30px;
+    }
         #loader {
             display: none;
             position: absolute;
@@ -104,76 +132,36 @@
                 </ul>
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item dropdown">
-                        <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
-                            data-toggle="dropdown">
-                            <i class="icon-bell mx-0"></i>
-                            <span class="count"></span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
-                            aria-labelledby="notificationDropdown">
-                            <p class="mb-0 font-weight-normal float-left dropdown-header">
-                                Notifications
-                            </p>
-                            <a class="dropdown-item preview-item">
-                                <div class="preview-thumbnail">
-                                    <div class="preview-icon bg-success">
-                                        <i class="ti-info-alt mx-0"></i>
-                                    </div>
-                                </div>
-                                <div class="preview-item-content">
-                                    <h6 class="preview-subject font-weight-normal">
-                                        Application Error
-                                    </h6>
-                                    <p class="font-weight-light small-text mb-0 text-muted">
-                                        Just now
-                                    </p>
-                                </div>
-                            </a>
-                            <a class="dropdown-item preview-item">
-                                <div class="preview-thumbnail">
-                                    <div class="preview-icon bg-warning">
-                                        <i class="ti-settings mx-0"></i>
-                                    </div>
-                                </div>
-                                <div class="preview-item-content">
-                                    <h6 class="preview-subject font-weight-normal">Settings</h6>
-                                    <p class="font-weight-light small-text mb-0 text-muted">
-                                        Private message
-                                    </p>
-                                </div>
-                            </a>
-                            <a class="dropdown-item preview-item">
-                                <div class="preview-thumbnail">
-                                    <div class="preview-icon bg-info">
-                                        <i class="ti-user mx-0"></i>
-                                    </div>
-                                </div>
-                                <div class="preview-item-content">
-                                    <h6 class="preview-subject font-weight-normal">
-                                        New user registration
-                                    </h6>
-                                    <p class="font-weight-light small-text mb-0 text-muted">
-                                        2 days ago
-                                    </p>
-                                </div>
-                            </a>
-                        </div>
+                      <a class="nav-link  dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                        <i class="icon-bell mx-0"></i>
+                        <span class="count" id="count"></span>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                        aria-labelledby="notificationDropdown" id="notificationTray">
+                        <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+          
+          
+          
+                      </div>
                     </li>
                     <li class="nav-item nav-profile dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                            <img src="../../images/faces/face28.jpg" alt="profile" />
+                      <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                        <img src="../../images/faces/face28.jpg" alt="profile" />
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+          
+                        <a class="dropdown-item" id="sign-out-btn">
+                          <i class="ti-power-off text-primary"></i>
+                          Logout
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
-                            aria-labelledby="profileDropdown">
-
-                            <a class="dropdown-item">
-                                <i class="ti-power-off text-primary"></i>
-                                Logout
-                            </a>
-                        </div>
+                      </div>
                     </li>
-
-                </ul>
+                    <!--  <li class="nav-item nav-settings d-none d-lg-flex">
+                      <a class="nav-link" href="#">
+                        <i class="icon-ellipsis"></i>
+                      </a>
+                    </li> -->
+                  </ul>
                 <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
                     data-toggle="offcanvas">
                     <span class="icon-menu"></span>
@@ -181,8 +169,17 @@
             </div>
         </nav>
         <!-- partial -->
+             <!-- Modal -->
+    <div id="sign-out-modal" class="modal">
+        <div class="modal-content">
+          <p>Are you sure you want to sign out?</p>
+          <button class="btn btn-danger btn-rounded align-self-center mb-3 w-50" id="confirm-sign-out-btn">Yes, sign me
+            out</button>
+          <button class="btn  btn-success btn-rounded align-self-center w-50" id="cancel-sign-out-btn">Cancel</button>
+        </div>
+      </div>
+      <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-
            <!-- partial -->
         <!-- partial:../../partials/_sidebar.html -->
         <nav class="sidebar  sidebar-offcanvas" id="sidebar">
@@ -300,6 +297,10 @@
             <div class="main-panel">
                 <div class="content-wrapper">
                     <div class="row">
+                        <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                            <h6 class="font-weight-normal mb-0"><span class="text-danger"
+                                id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
+                          </div>
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
@@ -387,7 +388,7 @@
             getDocs,
             onSnapshot,
             updateDoc,
-            addDoc, serverTimestamp, query, orderBy
+            addDoc, serverTimestamp, query, orderBy,where
         } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
         // TODO: Add SDKs for Firebase products that you want to use
@@ -416,7 +417,7 @@
 
         const colRef = collection(database, "products");
 
-        async function getBooking() {
+        async function getStock() {
             const currentYear = new Date().getFullYear();
             document.getElementById("currentYear").textContent = currentYear;
 
@@ -425,7 +426,7 @@
         if (user) {
           const uid = user.uid;
         } else {    
-          window.location.href = "login.html";
+          window.location.href = "../../../login.html";
         }
       });
             let tableRow = document.getElementById("stockTable");
@@ -654,7 +655,149 @@
             }
         }
 
-        window.onload = getBooking;
+const signOutBtn = document.getElementById("sign-out-btn");
+const signOutModal = document.getElementById("sign-out-modal");
+const confirmSignOutBtn = document.getElementById("confirm-sign-out-btn");
+const cancelSignOutBtn = document.getElementById("cancel-sign-out-btn");
+
+// Show the modal when the sign-out button is clicked
+signOutBtn.addEventListener("click", () => {
+  signOutModal.style.display = "block";
+});
+
+// Hide the modal when the cancel button is clicked
+cancelSignOutBtn.addEventListener("click", () => {
+  signOutModal.style.display = "none";
+});
+
+// Sign the user out of Firebase when the confirm button is clicked
+confirmSignOutBtn.addEventListener("click", () => {
+  auth.signOut()
+    .then(() => {
+      console.log("User signed out successfully");
+      signOutModal.style.display = "none";
+    })
+    .catch((error) => {
+      console.error("Error signing out:", error);
+      signOutModal.style.display = "none";
+    });
+});
+
+  //get notifications
+  async function getNotifications() {
+      try {
+        // Get a reference to the notificationTray element
+        const notificationTray = document.getElementById('notificationTray');
+        // const notSpan = document.getElementById('notSpan');
+
+
+
+        const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
+        await
+          onSnapshot(q, (querySnapshot) => {
+            const notificationCount = querySnapshot.size;
+
+            if (querySnapshot.size > 0) {
+              document.getElementById('notSpan').style.visibility = "visible";
+              document.getElementById('count').innerHTML = notificationCount
+              document.getElementById('notCount').innerHTML = notificationCount;
+              document.getElementById('notificationDropdown').classList.add("count-indicator");
+            } else {
+              document.getElementById('notSpan').style.visibility = "hidden";
+              document.getElementById('notificationDropdown').classList.remove("count-indicator");
+            }
+
+
+            // Loop through each document in the query snapshot and create an HTML element for it
+            querySnapshot.forEach((doc) => {
+              // Get the data from the document
+              const notification = doc.data();
+
+              // Create a new anchor element for the notification
+              const notificationLink = document.createElement('a');
+              notificationLink.classList.add('dropdown-item', 'preview-item');
+              if (notification.type == "service") {
+                notificationLink.setAttribute('href', './booking-page.html');
+              } else if (notification.type == "feedback") {
+                notificationLink.setAttribute('href', '../feedbacks/feedbacks.html');
+              } else {
+                notificationLink.setAttribute('href', '../orders/orders.html');
+              }
+
+
+
+              // Create the preview-thumbnail element
+              const previewThumbnail = document.createElement('div');
+              previewThumbnail.classList.add('preview-thumbnail');
+
+              // Create the preview-icon element
+              const previewIcon = document.createElement('div');
+              previewIcon.classList.add('preview-icon', 'bg-success');
+              const icon = document.createElement('i');
+              icon.classList.add('ti-info-alt', 'mx-0');
+              previewIcon.appendChild(icon);
+              previewThumbnail.appendChild(previewIcon);
+
+              // Create the preview-item-content element
+              const previewItemContent = document.createElement('div');
+              previewItemContent.classList.add('preview-item-content');
+              const subject = document.createElement('h6');
+              subject.classList.add('preview-subject', 'font-weight-normal');
+              subject.textContent = notification.title;
+              const message = document.createElement('p');
+              message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+              message.textContent = notification.message;
+              const time = document.createElement('p');
+              time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+              time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
+              previewItemContent.appendChild(subject);
+              previewItemContent.appendChild(message);
+              previewItemContent.appendChild(time);
+
+              // Add the preview-thumbnail and preview-item-content elements to the anchor element
+              notificationLink.appendChild(previewThumbnail);
+              notificationLink.appendChild(previewItemContent);
+
+              // Add the anchor element to the notificationTray element
+              notificationTray.appendChild(notificationLink);
+            });
+
+          });
+
+
+        function getTimeAgo(dateString) {
+          const date = new Date(dateString);
+          const now = new Date();
+          const diffMs = now - date;
+          const diffSec = Math.round(diffMs / 1000);
+          const diffMin = Math.round(diffSec / 60);
+          const diffHr = Math.round(diffMin / 60);
+          const diffDays = Math.round(diffHr / 24);
+
+          if (diffSec < 60) {
+            return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
+          } else if (diffMin < 60) {
+            return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+          } else if (diffHr < 24) {
+            return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
+          } else if (diffDays === 1) {
+            return `1 day ago`;
+          } else if (diffDays < 30) {
+            return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+          } else {
+            const diffMonths = Math.floor(diffDays / 30);
+            return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
+          }
+        }
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+        window.onload =function (){ getStock();
+            getNotifications();}
 
     </script>
 

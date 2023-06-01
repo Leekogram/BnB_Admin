@@ -18,6 +18,34 @@
   <!-- endinject -->
   <link rel="shortcut icon" href="../../images/favicon.ico" />
   <style>
+      /* Modal styles */
+      .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    #notSpan {
+      visibility: hidden;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      border-radius: 30px;
+    }
     #loader {
       display: none;
       position: absolute;
@@ -79,59 +107,16 @@
         </ul>
         <ul class="navbar-nav navbar-nav-right">
           <li class="nav-item dropdown">
-            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
-              data-toggle="dropdown">
+            <a class="nav-link  dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
               <i class="icon-bell mx-0"></i>
-              <span class="count"></span>
+              <span class="count" id="count"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
-              aria-labelledby="notificationDropdown">
-              <p class="mb-0 font-weight-normal float-left dropdown-header">
-                Notifications
-              </p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-success">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">
-                    Application Error
-                  </h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    Just now
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-settings mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">Settings</h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    Private message
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-info">
-                    <i class="ti-user mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject font-weight-normal">
-                    New user registration
-                  </h6>
-                  <p class="font-weight-light small-text mb-0 text-muted">
-                    2 days ago
-                  </p>
-                </div>
-              </a>
+              aria-labelledby="notificationDropdown" id="notificationTray">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+
+
+
             </div>
           </li>
           <li class="nav-item nav-profile dropdown">
@@ -139,14 +124,18 @@
               <img src="../../images/faces/face28.jpg" alt="profile" />
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-            
-              <a class="dropdown-item">
+
+              <a class="dropdown-item" id="sign-out-btn">
                 <i class="ti-power-off text-primary"></i>
                 Logout
               </a>
             </div>
           </li>
-        
+          <!--  <li class="nav-item nav-settings d-none d-lg-flex">
+            <a class="nav-link" href="#">
+              <i class="icon-ellipsis"></i>
+            </a>
+          </li> -->
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
           data-toggle="offcanvas">
@@ -155,10 +144,18 @@
       </div>
     </nav>
     <!-- partial -->
+         <!-- Modal -->
+         <div id="sign-out-modal" class="modal">
+          <div class="modal-content">
+            <p>Are you sure you want to sign out?</p>
+            <button class="btn btn-danger btn-rounded align-self-center mb-3 w-50" id="confirm-sign-out-btn">Yes, sign me
+              out</button>
+            <button class="btn  btn-success btn-rounded align-self-center w-50" id="cancel-sign-out-btn">Cancel</button>
+          </div>
+        </div>
+        <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-   
-
-   
+  
       <!-- partial -->
         <!-- partial:../../partials/_sidebar.html -->
         <nav class="sidebar  sidebar-offcanvas" id="sidebar">
@@ -276,12 +273,22 @@
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
+            <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+               
+              <h6 class="font-weight-normal mb-0"><span class="text-danger"
+                  id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
+            </div>
             <div class="col-lg-12 grid-margin stretch-card">
+           
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Customer List</h4>
                   <p class="card-description">
-                    <!-- Add class <code>.table-striped</code> -->
+                    <label for="start-date">From:</label>
+                    <input type="hidden" id="start-date">
+  
+                    <label for="end-date">To:</label>
+                    <input type="hidden" id="end-date">
                   </p>
                   <div class="table-responsive">
                     <table class="table">
