@@ -10,7 +10,7 @@ import {
   updateDoc,
   serverTimestamp,
   orderBy,
-  writeBatch,where
+  writeBatch,where, getDoc, getDocs
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -162,24 +162,24 @@ async function getOrders() {
           >
               
        </td>
-              <td>
-              <i class="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'icon-ellipsis'}" id="dropdownMenuSplitButton1"
-              data-toggle="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'dropdown'}"
-              aria-haspopup="true" aria-expanded="false"
-            ></i>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
-            <h6 class="dropdown-header">Action</h6>
-            ${data.orderStatus === 'New' ? `
-              <a class="dropdown-item accept-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}">Confirm</a>
-            ` : ''}
-            ${data.orderStatus === 'Confirmed' ? `
-              <a class="dropdown-item complete-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" data-itemprice="${doc.data().productPrice}">Complete</a>
-            ` : ''}
-            ${data.orderStatus === 'New' || data.orderStatus === 'Confirmed' ? `
-              <a class="dropdown-item cancel-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" >Cancel</a>
-            ` : ''}
-          </div>
-              </td>
+       <td>
+       <i class="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'icon-ellipsis'}" id="dropdownMenuSplitButton1"
+data-toggle="${data.orderStatus === 'Completed' || data.orderStatus === 'Cancelled' ? '' : 'dropdown'}"
+aria-haspopup="true" aria-expanded="false"
+></i>
+<div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
+<h6 class="dropdown-header">Action</h6>
+${data.orderStatus === 'New' ? `
+ <a class="dropdown-item accept-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}">Confirm</a>
+` : ''}
+${data.orderStatus === 'Confirmed' ? `
+ <a class="dropdown-item complete-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" data-itemprice="${doc.data().productPrice}" data-qty="${doc.data().productQuantity}">Complete</a>
+` : ''}
+${data.orderStatus === 'New' || data.orderStatus === 'Confirmed' ? `
+ <a class="dropdown-item cancel-action" data-docid="${doc.id}" data-itemname="${doc.data().productName}" data-customeremail="${doc.data().customerEmail}" >Cancel</a>
+` : ''}
+</div>
+       </td>
             </tr>`;
 
         rows += row;
@@ -202,22 +202,23 @@ async function getOrders() {
    });
  });
 
- // Add event listener to complete dropdown item
- const completeItems = document.querySelectorAll(".complete-action");
- completeItems.forEach((item) => {
-   item.addEventListener("click", (event) => {
-     const docId = event.target.dataset.docid;
-     const itemName = event.target.dataset.itemname;
-     const customaEmail = event.target.dataset.customeremail;
-     const itemPrice = event.target.dataset.itemprice;
-     // Show confirmation alert
-     const confirmation = window.confirm("Do you really want to set this order status to completed?");
-     if (confirmation) {
-       completeFunction(docId, customaEmail, itemName, itemPrice);
-     }
+  // Add event listener to complete dropdown item
+  const completeItems = document.querySelectorAll(".complete-action");
+  completeItems.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      const docId = event.target.dataset.docid;
+      const itemName = event.target.dataset.itemname;
+      const customaEmail = event.target.dataset.customeremail;
+      const itemPrice = event.target.dataset.itemprice;
+      const qtyPurchased = event.target.dataset.qty;
+      // Show confirmation alert
+      const confirmation = window.confirm("Do you really want to set this order status to completed?");
+      if (confirmation) {
+        completeFunction(docId, customaEmail, itemName, itemPrice, qtyPurchased);
+      }
 
-   });
- });
+    });
+  });
 
  // Add event listener to cancel dropdown item
  const cancelItems = document.querySelectorAll(".cancel-action");
@@ -286,44 +287,80 @@ async function getOrders() {
         });
     }
 
-    function completeFunction(docId, customerEmail, productName, productPrice) {
+    function completeFunction(docId, customerEmail, productName, productPrice, quantityPurchased) {
       // Execute your complete function here with the docId parameter
-      console.log("Complete function executed for docId", productPrice);
+      console.log("Complete function executed for docId", docId);
       const docRef = doc(database, "orders", docId);
-
-      const data = {
-        orderStatus: "Completed",
-        paymentStatus: "Paid",
-        amountPaid: productPrice,
-      };
-      updateDoc(docRef, data)
-        .then((docRef) => {
-          console.log(
-            "A New Document Field has been added to an existing document"
-          );
+      const productRef = collection(database, "products");
+    
+      // Query the products collection for a document with the matching field
+      const q = query(productRef, where("productName", "==", productName));
+    
+      // Get the current quantity of the product
+      getDocs(q)
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            const productDoc = querySnapshot.docs[0].data();
+            const currentQuantity = parseInt(productDoc.productQty);
+    
+            // Convert quantityPurchased to a number
+            const boughtQuantity = parseInt(quantityPurchased);
+    
+            // Check if the current quantity is less than the quantity being bought
+            if (currentQuantity < boughtQuantity) {
+              // Alert the user to add more quantity or purchase a smaller amount
+              alert("The current quantity in stock is insufficient. Please add more quantity or ask the customer to purchase a smaller amount.");
+            } else {
+              // Calculate the remaining quantity
+              const remainingQuantity = currentQuantity - boughtQuantity;
+    
+              // Update the productQty field in the matched document
+              const productDocRef = doc(database, "products", querySnapshot.docs[0].id);
+              updateDoc(productDocRef, { productQty: remainingQuantity.toString() })
+                .then(() => {
+                  console.log("Product quantity updated successfully.");
+                })
+                .catch((error) => {
+                  console.log("Error updating product quantity:", error);
+                });
+    
+              const data = {
+                orderStatus: "Completed",
+                paymentStatus: "Paid",
+                amountPaid: productPrice,
+              };
+              updateDoc(docRef, data)
+                .then(() => {
+                  console.log("A new document field has been added to an existing document.");
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+    
+              addDoc(collection(database, "appNotification"), {
+                message: `Your order for ${productName} has been set to completed.`,
+                email: customerEmail,
+                status: "New",
+                timestamp: serverTimestamp(),
+              });
+    
+              addDoc(collection(database, "log"), {
+                comment: "Order status has been updated to completed.",
+                timestamp: serverTimestamp(),
+              })
+                .then(() => {
+                  console.log("Order has been updated successfully");
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }
+          } else {
+            console.log("Product does not exist.");
+          }
         })
         .catch((error) => {
-          console.log(error);
-        });
-
-      addDoc(collection(database, "appNotification"), {
-        message: `Your order for ${productName} has been set to completed.`,
-        email: customerEmail,
-        status: "New",
-        timestamp: serverTimestamp(),
-      });
-
-      addDoc(collection(database, "log"), {
-        comment: "order status has been update to completed.",
-
-        timestamp: serverTimestamp(),
-      })
-        .then((docRef) => {
-          console.log("Order has been updated successfully");
-        })
-        .catch((error) => {
-          console.log(error);
-          // document.getElementById("productForm").reset();
+          console.log("Error retrieving product:", error);
         });
     }
     function cancelFunction(docId, customerEmail, productName) {

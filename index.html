@@ -1084,82 +1084,84 @@
               // document.getElementById("productForm").reset();
             });
         }
+
+
         function completeFunction(docId, customerEmail, productName, productPrice, quantityPurchased) {
-  // Execute your complete function here with the docId parameter
-  console.log("Complete function executed for docId", docId);
-  const docRef = doc(database, "orders", docId);
-  const productRef = collection(database, "products");
+          // Execute your complete function here with the docId parameter
+          console.log("Complete function executed for docId", docId);
+          const docRef = doc(database, "orders", docId);
+          const productRef = collection(database, "products");
 
-  // Query the products collection for a document with the matching field
-  const q = query(productRef, where("productName", "==", productName));
+          // Query the products collection for a document with the matching field
+          const q = query(productRef, where("productName", "==", productName));
 
-  // Get the current quantity of the product
-  getDocs(q)
-    .then((querySnapshot) => {
-      if (!querySnapshot.empty) {
-        const productDoc = querySnapshot.docs[0].data();
-        const currentQuantity = parseInt(productDoc.productQty);
+          // Get the current quantity of the product
+          getDocs(q)
+            .then((querySnapshot) => {
+              if (!querySnapshot.empty) {
+                const productDoc = querySnapshot.docs[0].data();
+                const currentQuantity = parseInt(productDoc.productQty);
 
-        // Convert quantityPurchased to a number
-        const boughtQuantity = parseInt(quantityPurchased);
+                // Convert quantityPurchased to a number
+                const boughtQuantity = parseInt(quantityPurchased);
 
-        // Check if the current quantity is less than the quantity being bought
-        if (currentQuantity < boughtQuantity) {
-          // Alert the user to add more quantity or purchase a smaller amount
-          alert("The current quantity in stock is insufficient. Please add more quantity or ask the customer to purchase a smaller amount.");
-        } else {
-          // Calculate the remaining quantity
-          const remainingQuantity = currentQuantity - boughtQuantity;
+                // Check if the current quantity is less than the quantity being bought
+                if (currentQuantity < boughtQuantity) {
+                  // Alert the user to add more quantity or purchase a smaller amount
+                  alert("The current quantity in stock is insufficient. Please add more quantity or ask the customer to purchase a smaller amount.");
+                } else {
+                  // Calculate the remaining quantity
+                  const remainingQuantity = currentQuantity - boughtQuantity;
 
-          // Update the productQty field in the matched document
-          const productDocRef = doc(database, "products", querySnapshot.docs[0].id);
-          updateDoc(productDocRef, { productQty: remainingQuantity })
-            .then(() => {
-              console.log("Product quantity updated successfully.");
+                  // Update the productQty field in the matched document
+                  const productDocRef = doc(database, "products", querySnapshot.docs[0].id);
+                  updateDoc(productDocRef, { productQty: remainingQuantity.toString() })
+                    .then(() => {
+                      console.log("Product quantity updated successfully.");
+                    })
+                    .catch((error) => {
+                      console.log("Error updating product quantity:", error);
+                    });
+
+                  const data = {
+                    orderStatus: "Completed",
+                    paymentStatus: "Paid",
+                    amountPaid: productPrice,
+                  };
+                  updateDoc(docRef, data)
+                    .then(() => {
+                      console.log("A new document field has been added to an existing document.");
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+
+                  addDoc(collection(database, "appNotification"), {
+                    message: `Your order for ${productName} has been set to completed.`,
+                    email: customerEmail,
+                    status: "New",
+                    timestamp: serverTimestamp(),
+                  });
+
+                  addDoc(collection(database, "log"), {
+                    comment: "Order status has been updated to completed.",
+                    timestamp: serverTimestamp(),
+                  })
+                    .then(() => {
+                      console.log("Order has been updated successfully");
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }
+              } else {
+                console.log("Product does not exist.");
+              }
             })
             .catch((error) => {
-              console.log("Error updating product quantity:", error);
-            });
-
-          const data = {
-            orderStatus: "Completed",
-            paymentStatus: "Paid",
-            amountPaid: productPrice,
-          };
-          updateDoc(docRef, data)
-            .then(() => {
-              console.log("A new document field has been added to an existing document.");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-
-          addDoc(collection(database, "appNotification"), {
-            message: `Your order for ${productName} has been set to completed.`,
-            email: customerEmail,
-            status: "New",
-            timestamp: serverTimestamp(),
-          });
-
-          addDoc(collection(database, "log"), {
-            comment: "Order status has been updated to completed.",
-            timestamp: serverTimestamp(),
-          })
-            .then(() => {
-              console.log("Order has been updated successfully");
-            })
-            .catch((error) => {
-              console.log(error);
+              console.log("Error retrieving product:", error);
             });
         }
-      } else {
-        console.log("Product does not exist.");
-      }
-    })
-    .catch((error) => {
-      console.log("Error retrieving product:", error);
-    });
-}
 
 
 
