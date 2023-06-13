@@ -76,7 +76,13 @@
         border-top-color: #FFC100;
         animation: spin 1s linear infinite;
       }
-      #instruction{width: 100px !important;}
+      .section-des {
+    max-width: 300px; /* Adjust the maximum width as needed */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+  
 
       input[type="text"],
         input[type="number"] {
@@ -224,7 +230,7 @@
   
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="./orders.html">
+              <a class="nav-link" href="./index.html">
                 <i class="icon-paper menu-icon"></i>
                 <span class="menu-title">Orders</span>
   
@@ -245,12 +251,16 @@
                   <li class="nav-item">
                     <a class="nav-link" href="../inventory/add-item.html">Add Stock</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../inventory/update-stock.html">Update Stock</a>
-                  </li>
+               
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
               </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../section.html">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Section</span>
+              </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
@@ -267,9 +277,7 @@
                   <li class="nav-item">
                     <a class="nav-link" href="../service/add-service.html">Add Services</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../service/update-service.html">Update Service</a>
-                  </li>
+             
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
               </div>
@@ -326,6 +334,7 @@
                 <h6 class="font-weight-normal mb-0"><span class="text-danger"
                     id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
               </div>
+            </div>
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">

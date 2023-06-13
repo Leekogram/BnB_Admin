@@ -22,8 +22,171 @@
   <link rel="shortcut icon" href="../../images/favicon.ico" />
   <link rel="stylesheet" href="../../css/alert-style.css" />
   <style>
-      /* Modal styles */
-      .modal {
+    /* ... Existing styles ... */
+
+    /* Style for the modal */
+    .imageModal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+
+    /* Style for the modal image */
+    #modalImage {
+      display: block;
+      margin: auto;
+      max-width: 80%;
+      max-height: 80%;
+    }
+
+    /* Style for the close button */
+    .imageClose {
+      color: #fff;
+      font-size: 30px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      cursor: pointer;
+    }
+
+
+
+
+
+    .image-zoom {
+      transform: scale(1);
+      transition: transform 0.3s;
+    }
+
+    .image-zoom:hover {
+      transform: scale(3);
+    }
+
+
+    #snackbar {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 2px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+    }
+
+    #snackbar.show {
+      visibility: visible;
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @-webkit-keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+
+
+
+
+    #close {
+      cursor: pointer;
+    }
+
+    .modfiy-modal-nodal {
+      display: none;
+      /* Hide the modal by default */
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Remove the opacity */
+    }
+
+    .modfiy-modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      /* Adjust the modal's vertical position */
+      padding: 20px;
+      border: none;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 700px;
+      position: relative;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+
+
+    .section-des {
+      max-width: 700px;
+      /* Adjust the maximum width as needed */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+
+
+    /* Modal styles */
+    .modal {
       display: none;
       position: fixed;
       z-index: 1;
@@ -50,6 +213,7 @@
       text-align: center;
       border-radius: 30px;
     }
+
     #loader {
       display: none;
       position: absolute;
@@ -74,8 +238,7 @@
       animation: spin 1s linear infinite;
     }
 
-    input[type="text"],
-    input[type="number"] {
+    #searchInput {
       float: right;
       width: 200px;
       padding-left: 10px;
@@ -99,6 +262,10 @@
         transform: rotate(360deg);
       }
     }
+
+    table#myTable td {
+      vertical-align: top;
+    }
   </style>
 
 </head>
@@ -110,7 +277,7 @@
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
         <a class="navbar-brand brand-logo mr-5" href="../../index.html"><img src="../../images/logo.png" class="mr-2"
             alt="logo" /></a>
-        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo-mini.svg"
+        <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../../images/logo.png"
             alt="logo" /></a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -169,122 +336,198 @@
       </div>
     </nav>
     <!-- partial -->
-         <!-- Modal -->
-         <div id="sign-out-modal" class="modal">
-          <div class="modal-content">
-            <p>Are you sure you want to sign out?</p>
-            <button class="btn btn-danger btn-rounded align-self-center mb-3 w-50" id="confirm-sign-out-btn">Yes, sign me
-              out</button>
-            <button class="btn  btn-success btn-rounded align-self-center w-50" id="cancel-sign-out-btn">Cancel</button>
+    <!-- Modal -->
+    <div id="imageModal" class="imageModal">
+      <span class="imageClose">&times;</span>
+      <img id="modalImage" src="" alt="Enlarged Image">
+    </div>
+
+    <!-- Modal -->
+    <div id="sign-out-modal" class="modal">
+      <div class="modal-content">
+        <p>Are you sure you want to sign out?</p>
+        <button class="btn btn-danger btn-rounded align-self-center mb-3 w-50" id="confirm-sign-out-btn">Yes, sign me
+          out</button>
+        <button class="btn  btn-success btn-rounded align-self-center w-50" id="cancel-sign-out-btn">Cancel</button>
+      </div>
+    </div>
+    <!-- Example modal structure -->
+    <div id="modifyModal" class="modfiy-modal-nodal">
+      <div class="modfiy-modal-content">
+        <span class="close" id="close">&times;</span>
+        <h4>Edit Product</h4><i class="fas fas-edit"></i>
+        <form class="forms-sample" method="post" id="productForm">
+          <div class="form-group">
+            <div class="image-preview-container">
+              <img id="imagePreview" class="image-preview" style="height: 200px;width: 200px;">
+            </div>
+
+            <label>
+              Product image</label>
+            <input type="file" name="img[]" class="file-upload-default" id="product-image" />
+            <div class="input-group col-xs-12">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Product Image" />
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-dark" type="button">
+                  Change Image
+                </button>
+              </span>
+            </div>
           </div>
-        </div>
-        <!-- partial -->
+          <div class="form-group">
+            <label for="productTitle">Product Title</label>
+            <input type="text" class="form-control" autocomplete="off" id="productTitle"
+              placeholder="Naturale beauty cream" required />
+          </div>
+          <div class="form-group">
+            <label for="productCat">Product Category</label>
+            <select class="form-control" id="productCat" required>
+              <option value="beautyProduct">Beauty Product</option>
+              <option value="fashionProduct">Fashion Product</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="productPrice">Product Price</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text bg-dark text-white">₦</span>
+              </div>
+              <input type="text" class="form-control" id="productPrice" aria-label="Amount (to the nearest naira)"
+                required />
+              <div class="input-group-append">
+                <span class="input-group-text">.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="productQuantiy">Product Qauntity</label>
+            <input type="number" class="form-control" id="productQuantiy" placeholder="100" min="1" required />
+          </div>
+          <div class="form-group">
+            <label for="productDescription">Product Description</label>
+            <textarea class="form-control" id="productDescription" rows="4" required></textarea>
+            <input type="hidden" class="form-control" autocomplete="off" id="documentId" />
+          </div>
+
+          <button type="submit" class="btn btn-md btn-dark " id="updateProductBtn">
+            Update
+          </button>
+          <button class="btn btn-light" type="reset" id="resetBtn">Reset</button>
+
+        </form>
+      </div>
+    </div>
+
+
+    <!-- partial -->
     <div class="container-fluid page-body-wrapper">
       <!-- partial:../../partials/_settings-panel.html -->
- <!-- partial -->
-        <!-- partial:../../partials/_sidebar.html -->
-        <nav class="sidebar  sidebar-offcanvas" id="sidebar">
-          <ul class="nav">
-            <li class="nav-item">
-              <a class="nav-link" href="../../index.html">
-                <i class="icon-grid menu-icon"></i>
-                <span class="menu-title">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../bookings/booking-page.html">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">Bookings</span>
-  
-              </a>
-  
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../orders/orders.html">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">Orders</span>
-  
-              </a>
-  
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-layout menu-icon"></i>
-                <span class="menu-title">Inventory</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="ui-basic">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="./viewstock-viewstock-dashboard.html">View Stock</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="./add-item.html">Add Stock</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="./update-stock.html">Update Stock</a>
-                  </li>
-                  <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
-                aria-controls="ui-basic">
-                <i class="icon-contract menu-icon"></i>
-                <span class="menu-title">Services</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="ui-service">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="../service/service-dashboard.html">View Services</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../service/add-service.html">Add Services</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../service/update-service.html">Update Service</a>
-                  </li>
-                  <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#ui-customer" aria-expanded="false"
-                aria-controls="ui-basic">
-                <i class="icon-head menu-icon"></i>
-                <span class="menu-title">Customers</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="ui-customer">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item">
-                    <a class="nav-link" href="../customers/registered-customers.html">Customers</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../customers/customer_loyalty.html">Customer loyalty</a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
-                aria-controls="ui-basic">
-                <i class="icon-columns menu-icon"></i>
-                <span class="menu-title">Message</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="ui-message">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="../message/view_messages.html">View messages</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="../../send-bc-message.html">Send Message</a></li>
-                  <li class="nav-item"> <a class="nav-link" href="../feedbacks/feedbacks.html">Feed backs</a></li>
-  
-                </ul>
-              </div>
-            </li>
-            <!--   <li class="nav-item">
+      <!-- partial -->
+      <!-- partial:../../partials/_sidebar.html -->
+      <nav class="sidebar  sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="../../index.html">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../bookings/booking-page.html">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Bookings</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../orders/orders.html">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Orders</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+              <i class="icon-layout menu-icon"></i>
+              <span class="menu-title">Inventory</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="./viewstock-dashboard.html">View Stock</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./add-item.html">Add Stock</a>
+                </li>
+
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../section.html">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Section</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-contract menu-icon"></i>
+              <span class="menu-title">Services</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-service">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="../service/service-dashboard.html">View Services</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../service/add-service.html">Add Services</a>
+                </li>
+             
+                <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-customer" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-head menu-icon"></i>
+              <span class="menu-title">Customers</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-customer">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="../customers/registered-customers.html">Customers</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../customers/customer_loyalty.html">Customer loyalty</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-message" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="icon-columns menu-icon"></i>
+              <span class="menu-title">Message</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-message">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../message/view_messages.html">View messages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../../send-bc-message.html">Send Message</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../feedbacks/feedbacks.html">Feed backs</a></li>
+
+              </ul>
+            </div>
+          </li>
+          <!--   <li class="nav-item">
               <a class="nav-link" href="" >
                 <i class="icon-paper menu-icon"></i>
                 <span class="menu-title">FeedBacks</span>
@@ -292,16 +535,16 @@
               </a>
             
             </li> -->
-          </ul>
-        </nav>
+        </ul>
+      </nav>
       <!-- partial -->
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
             <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-               
-              <h6 class="font-weight-normal mb-0"><span class="text-danger"
-                  id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
+
+              <h6 class="font-weight-normal mb-0"><span class="text-danger" id="notSpan"> You have <span
+                    id="notCount"></span> unread notification(s) !</span></h6>
             </div>
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
@@ -319,9 +562,9 @@
 
                           <th>Product Image</th>
                           <th>Product name</th>
-                          <th>Product Description</th>
                           <th>Product Price</th>
                           <th>Unit</th>
+                          <th>Product Description</th>
                           <th>Status</th>
 
 
@@ -341,6 +584,8 @@
             </div>
           </div>
         </div>
+        <div id="snackbar"></div>
+
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
         <footer class="footer">
@@ -380,284 +625,7 @@
   <script src="../../js/select2.js"></script>
   <script src="../../js/alert-file.js"></script>
   <!-- End custom js for this page-->
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      doc,
-      getDocs,
-      onSnapshot,
-      updateDoc,
-      query,
-      orderBy,where
-    } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-      apiKey: "AIzaSyAjW8pGmsL9l5olUhU5je0zKD8hkrQThZw",
-      authDomain: "boldandbeautifulsalon-89023.firebaseapp.com",
-      projectId: "boldandbeautifulsalon-89023",
-      storageBucket: "boldandbeautifulsalon-89023.appspot.com",
-      messagingSenderId: "466649288397",
-      appId: "1:466649288397:web:150d344db30d3f2185a384",
-      measurementId: "G-0V7GXFY5ZP",
-      databaseURL:
-        "https://boldandbeautifulsalon-89023-default-rtdb.firebaseio.com/",
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-
-    // Initialize  Database and get a reference to the service
-    const database = getFirestore(app);
-    // Initialize Firebase Authentication and get a reference to the service
-    const auth = getAuth(app);
-    const colRef = collection(database, "products");
-
-    async function getStock() {
-      const currentYear = new Date().getFullYear();
-      document.getElementById("currentYear").textContent = currentYear;
-
-      //check if user is logged in or not
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const uid = user.uid;
-        } else {
-          window.location.href = "../../../login.html";
-        }
-      });
-      let tableRow = document.getElementById("stockTable");
-      const loader = document.getElementById("loader");
-      // show the loader initially
-      loader.style.display = "block";
-
-      try {
-        const q = query(colRef, orderBy("timestamp", "desc"));
-
-        onSnapshot(q, { includeMetadataChanges: true }, (docsSnap) => {
-          loader.style.display = "none";
-          let rows = "";
-          let index = 0;
-          docsSnap.forEach((doc) => {
-            index++;
-            let data = doc.data();
-            let row = `<tr>
-              <td>${index}</td>
-              <td><img src="${data.productPicture}"  style="border-radius:0px;width:50px;heigth:50px"/></td>
-              <td>${data.productName} </td>
-              <td>
-              ${data.productDesc}
-             
-              </td>
-              <td>
-               
-              ${data.productPrice}
-                </td>
-              <td>  ${data.productQty}</td>
-              
-              <td>
-                <label class="badge ${data.productQty == 0
-                ? "badge-secondary"
-                : data.productQty <= 2
-                  ? "badge-warning"
-                  : data.productQty >= 3
-                    ? "badge-success" : "badge-dart"
-
-              }" id="statusLabel"
-                  >${data.productQty == 0
-                ? "Not available"
-                : data.productQty <= 2
-                  ? "Low in stock"
-                  : data.productQty >= 3
-                    ? "Available"
-                    : "Not available"}</label
-                >
-              </td>
-             
-              <td>
-                <i
-                  class="icon-ellipsis"
-                  id="dropdownMenuSplitButton1" data-toggle="${data.status == "Completed" ? "" : "dropdown"}" aria-haspopup="true" aria-expanded="false"
-                ></i>
-                <div
-                  class="dropdown-menu"
-                  aria-labelledby="dropdownMenuSplitButton1"
-                >
-                  <h5 class="dropdown-header">Action</h5>
-                  <a class="dropdown-item update-action" href="./update-stock.html">Modify</a>
-                 
-              
-                
-                </div>
-              </td>
-            </tr>`;
-
-            rows += row;
-          });
-          tableRow.innerHTML = rows;
-        });
-
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-
-const signOutBtn = document.getElementById("sign-out-btn");
-const signOutModal = document.getElementById("sign-out-modal");
-const confirmSignOutBtn = document.getElementById("confirm-sign-out-btn");
-const cancelSignOutBtn = document.getElementById("cancel-sign-out-btn");
-
-// Show the modal when the sign-out button is clicked
-signOutBtn.addEventListener("click", () => {
-  signOutModal.style.display = "block";
-});
-
-// Hide the modal when the cancel button is clicked
-cancelSignOutBtn.addEventListener("click", () => {
-  signOutModal.style.display = "none";
-});
-
-// Sign the user out of Firebase when the confirm button is clicked
-confirmSignOutBtn.addEventListener("click", () => {
-  auth.signOut()
-    .then(() => {
-      console.log("User signed out successfully");
-      signOutModal.style.display = "none";
-    })
-    .catch((error) => {
-      console.error("Error signing out:", error);
-      signOutModal.style.display = "none";
-    });
-});
-
-  //get notifications
-  async function getNotifications() {
-      try {
-        // Get a reference to the notificationTray element
-        const notificationTray = document.getElementById('notificationTray');
-        // const notSpan = document.getElementById('notSpan');
-
-
-
-        const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
-        await
-          onSnapshot(q, (querySnapshot) => {
-            const notificationCount = querySnapshot.size;
-
-            if (querySnapshot.size > 0) {
-              document.getElementById('notSpan').style.visibility = "visible";
-              document.getElementById('count').innerHTML = notificationCount
-              document.getElementById('notCount').innerHTML = notificationCount;
-              document.getElementById('notificationDropdown').classList.add("count-indicator");
-            } else {
-              document.getElementById('notSpan').style.visibility = "hidden";
-              document.getElementById('notificationDropdown').classList.remove("count-indicator");
-            }
-
-
-            // Loop through each document in the query snapshot and create an HTML element for it
-            querySnapshot.forEach((doc) => {
-              // Get the data from the document
-              const notification = doc.data();
-
-              // Create a new anchor element for the notification
-              const notificationLink = document.createElement('a');
-              notificationLink.classList.add('dropdown-item', 'preview-item');
-              if (notification.type == "service") {
-                notificationLink.setAttribute('href', './booking-page.html');
-              } else if (notification.type == "feedback") {
-                notificationLink.setAttribute('href', '../feedbacks/feedbacks.html');
-              } else {
-                notificationLink.setAttribute('href', '../orders/orders.html');
-              }
-
-
-
-              // Create the preview-thumbnail element
-              const previewThumbnail = document.createElement('div');
-              previewThumbnail.classList.add('preview-thumbnail');
-
-              // Create the preview-icon element
-              const previewIcon = document.createElement('div');
-              previewIcon.classList.add('preview-icon', 'bg-success');
-              const icon = document.createElement('i');
-              icon.classList.add('ti-info-alt', 'mx-0');
-              previewIcon.appendChild(icon);
-              previewThumbnail.appendChild(previewIcon);
-
-              // Create the preview-item-content element
-              const previewItemContent = document.createElement('div');
-              previewItemContent.classList.add('preview-item-content');
-              const subject = document.createElement('h6');
-              subject.classList.add('preview-subject', 'font-weight-normal');
-              subject.textContent = notification.title;
-              const message = document.createElement('p');
-              message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
-              message.textContent = notification.message;
-              const time = document.createElement('p');
-              time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
-              time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
-              previewItemContent.appendChild(subject);
-              previewItemContent.appendChild(message);
-              previewItemContent.appendChild(time);
-
-              // Add the preview-thumbnail and preview-item-content elements to the anchor element
-              notificationLink.appendChild(previewThumbnail);
-              notificationLink.appendChild(previewItemContent);
-
-              // Add the anchor element to the notificationTray element
-              notificationTray.appendChild(notificationLink);
-            });
-
-          });
-
-
-        function getTimeAgo(dateString) {
-          const date = new Date(dateString);
-          const now = new Date();
-          const diffMs = now - date;
-          const diffSec = Math.round(diffMs / 1000);
-          const diffMin = Math.round(diffSec / 60);
-          const diffHr = Math.round(diffMin / 60);
-          const diffDays = Math.round(diffHr / 24);
-
-          if (diffSec < 60) {
-            return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
-          } else if (diffMin < 60) {
-            return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
-          } else if (diffHr < 24) {
-            return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
-          } else if (diffDays === 1) {
-            return `1 day ago`;
-          } else if (diffDays < 30) {
-            return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-          } else {
-            const diffMonths = Math.floor(diffDays / 30);
-            return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
-          }
-        }
-
-
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-
-    window.onload =function (){
-
-     getStock();
-getNotifications();
-    }
-
-  </script>
+  <script src="../../js/firebase/manage_stock_dashboard.js" type="module"> </script>
 
 
   <script>
@@ -686,6 +654,7 @@ getNotifications();
 
     document.getElementById("searchInput").addEventListener("keyup", searchTable);
   </script>
+
 
 </body>
 

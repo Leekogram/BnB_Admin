@@ -143,7 +143,7 @@ async function getBooking() {
               <td>${data.email}</td>
               <td>${data.bookdate} ${data.booktime}</td>
               <td>${data.sourceType}</td>
-              <td id="instruction">${data.instruction}</td>
+              <td >  <div class="section-des"> ${data.instruction}</div></td>
               <td>
               <label class="badge ${data.status == "New"
             ? "badge-info"

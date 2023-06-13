@@ -3,13 +3,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebas
 import {
   getFirestore,
   collection,
-  addDoc,
+  addDoc, getDocs,
   serverTimestamp,
   orderBy,
   query,
   onSnapshot,
   startAt,
-  endAt,where
+  endAt, where
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
 import {
   getStorage,
@@ -49,7 +49,7 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     const uid = user.uid;
   } else {
-  
+
     window.location.href = "../../../login.html";
   }
 });
@@ -84,7 +84,79 @@ var inputField = document.getElementById("serviceName");
 var matchingValuesList = document.createElement("ul");
 document.getElementById("matchingValuesContainer").appendChild(matchingValuesList);
 
-// Add an event listener to the input field
+inputField.addEventListener("input", searchMatchingValues);
+inputField.addEventListener("keyup", searchMatchingValues);
+inputField.addEventListener("focus", searchMatchingValues);
+
+function searchMatchingValues() {
+  // Get the entered value
+  var enteredValue = inputField.value;
+
+  // Query the Firestore collection for matching values
+  const q = query(
+    collection(database, "service"),
+    orderBy("serviceName"),
+    startAt(enteredValue),
+    endAt(enteredValue + "\uf8ff")
+  );
+
+  getDocs(q)
+    .then((querySnapshot) => {
+      // Get the matching values
+      var matchingValues = querySnapshot.docs.map(function (doc) {
+        console.log(doc.data().serviceName);
+        return doc.data().serviceName;
+      });
+
+      // Clear the existing list items
+      matchingValuesList.innerHTML = "";
+
+      // If there are matching values
+      if (matchingValues.length > 0) {
+        // Loop through the matching values and add them to the list
+        for (var i = 0; i < matchingValues.length; i++) {
+          var matchingValue = matchingValues[i];
+          var matchingValueItem = document.createElement("li");
+          matchingValueItem.textContent = matchingValue;
+          matchingValueItem.addEventListener("click", function () {
+            inputField.value = this.textContent;
+            matchingValuesList.innerHTML = "";
+          });
+          matchingValuesList.appendChild(matchingValueItem);
+        }
+
+        // Display the list of matching values
+        document.getElementById("matchingValuesContainer").style.display = "block";
+        document.getElementById("productExist").style.display = "block";
+        document.getElementById("addProductBtn").style.display = "none";
+      } else {
+        // Hide the matching values container if there are no matching values
+        document.getElementById("matchingValuesContainer").style.display = "none";
+        document.getElementById("productExist").style.display = "none";
+        document.getElementById("addProductBtn").style.display = "block";
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting matching values: ", error);
+    });
+}
+function showSnackbar(message, isSuccess) {
+  const snackbar = document.getElementById("snackbar");
+  snackbar.textContent = message;
+
+  if (isSuccess) {
+    snackbar.style.backgroundColor = "#4CAF50";
+  } else {
+    snackbar.style.backgroundColor = "#F44336";
+  }
+
+  snackbar.classList.add("show");
+
+  setTimeout(() => {
+    snackbar.classList.remove("show");
+  }, 2000);
+}
+/* // Add an event listener to the input field
 inputField.addEventListener("input", function () {
   // Get the entered value
   var enteredValue = inputField.value;
@@ -134,7 +206,7 @@ inputField.addEventListener("input", function () {
       document.getElementById("addProductBtn").style.display = "block";
     }
   });
-});
+}); */
 
 
 function addProduct(e) {
@@ -153,11 +225,11 @@ function addProduct(e) {
 
   // const storRef = sRef(storage,'products');
   const file = document.querySelector("#service-image").files[0];
-  if (!file){
+  if (!file) {
     alert("Service image is required");
     addProductBtn.innerHTML = "Submit";
-     return;
-  }  
+    return;
+  }
 
   const storageRef = sRef(storage, `serviceImages/${file.name}` + new Date());
   const uploadTask = uploadBytesResumable(storageRef, file);
@@ -178,7 +250,7 @@ function addProduct(e) {
         // setImgUrl(downloadURL)
         pictureUrl = downloadURL;
         setTimeout(
-            addService(
+          addService(
             pictureUrl,
             serviceName,
             servicePrice,
@@ -378,119 +450,119 @@ function createAlert(
   }
 }
 
-  //get notifications
-  async function getNotifications() {
-    try {
-      // Get a reference to the notificationTray element
-      const notificationTray = document.getElementById('notificationTray');
-      // const notSpan = document.getElementById('notSpan');
+//get notifications
+async function getNotifications() {
+  try {
+    // Get a reference to the notificationTray element
+    const notificationTray = document.getElementById('notificationTray');
+    // const notSpan = document.getElementById('notSpan');
 
 
 
-      const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
-      await
-        onSnapshot(q, (querySnapshot) => {
-          const notificationCount = querySnapshot.size;
+    const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
+    await
+      onSnapshot(q, (querySnapshot) => {
+        const notificationCount = querySnapshot.size;
 
-          if (querySnapshot.size > 0) {
-            document.getElementById('notSpan').style.visibility = "visible";
-            document.getElementById('count').innerHTML = notificationCount
-            document.getElementById('notCount').innerHTML = notificationCount;
-            document.getElementById('notificationDropdown').classList.add("count-indicator");
+        if (querySnapshot.size > 0) {
+          document.getElementById('notSpan').style.visibility = "visible";
+          document.getElementById('count').innerHTML = notificationCount
+          document.getElementById('notCount').innerHTML = notificationCount;
+          document.getElementById('notificationDropdown').classList.add("count-indicator");
+        } else {
+          document.getElementById('notSpan').style.visibility = "hidden";
+          document.getElementById('notificationDropdown').classList.remove("count-indicator");
+        }
+
+
+        // Loop through each document in the query snapshot and create an HTML element for it
+        querySnapshot.forEach((doc) => {
+          // Get the data from the document
+          const notification = doc.data();
+
+          // Create a new anchor element for the notification
+          const notificationLink = document.createElement('a');
+          notificationLink.classList.add('dropdown-item', 'preview-item');
+          if (notification.type == "service") {
+            notificationLink.setAttribute('href', './booking-page.html');
+          } else if (notification.type == "feedback") {
+            notificationLink.setAttribute('href', '../feedbacks/feedbacks.html');
           } else {
-            document.getElementById('notSpan').style.visibility = "hidden";
-            document.getElementById('notificationDropdown').classList.remove("count-indicator");
+            notificationLink.setAttribute('href', '../orders/orders.html');
           }
 
 
-          // Loop through each document in the query snapshot and create an HTML element for it
-          querySnapshot.forEach((doc) => {
-            // Get the data from the document
-            const notification = doc.data();
 
-            // Create a new anchor element for the notification
-            const notificationLink = document.createElement('a');
-            notificationLink.classList.add('dropdown-item', 'preview-item');
-            if (notification.type == "service") {
-              notificationLink.setAttribute('href', './booking-page.html');
-            } else if (notification.type == "feedback") {
-              notificationLink.setAttribute('href', '../feedbacks/feedbacks.html');
-            } else {
-              notificationLink.setAttribute('href', '../orders/orders.html');
-            }
+          // Create the preview-thumbnail element
+          const previewThumbnail = document.createElement('div');
+          previewThumbnail.classList.add('preview-thumbnail');
 
+          // Create the preview-icon element
+          const previewIcon = document.createElement('div');
+          previewIcon.classList.add('preview-icon', 'bg-success');
+          const icon = document.createElement('i');
+          icon.classList.add('ti-info-alt', 'mx-0');
+          previewIcon.appendChild(icon);
+          previewThumbnail.appendChild(previewIcon);
 
+          // Create the preview-item-content element
+          const previewItemContent = document.createElement('div');
+          previewItemContent.classList.add('preview-item-content');
+          const subject = document.createElement('h6');
+          subject.classList.add('preview-subject', 'font-weight-normal');
+          subject.textContent = notification.title;
+          const message = document.createElement('p');
+          message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+          message.textContent = notification.message;
+          const time = document.createElement('p');
+          time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+          time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
+          previewItemContent.appendChild(subject);
+          previewItemContent.appendChild(message);
+          previewItemContent.appendChild(time);
 
-            // Create the preview-thumbnail element
-            const previewThumbnail = document.createElement('div');
-            previewThumbnail.classList.add('preview-thumbnail');
+          // Add the preview-thumbnail and preview-item-content elements to the anchor element
+          notificationLink.appendChild(previewThumbnail);
+          notificationLink.appendChild(previewItemContent);
 
-            // Create the preview-icon element
-            const previewIcon = document.createElement('div');
-            previewIcon.classList.add('preview-icon', 'bg-success');
-            const icon = document.createElement('i');
-            icon.classList.add('ti-info-alt', 'mx-0');
-            previewIcon.appendChild(icon);
-            previewThumbnail.appendChild(previewIcon);
-
-            // Create the preview-item-content element
-            const previewItemContent = document.createElement('div');
-            previewItemContent.classList.add('preview-item-content');
-            const subject = document.createElement('h6');
-            subject.classList.add('preview-subject', 'font-weight-normal');
-            subject.textContent = notification.title;
-            const message = document.createElement('p');
-            message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
-            message.textContent = notification.message;
-            const time = document.createElement('p');
-            time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
-            time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
-            previewItemContent.appendChild(subject);
-            previewItemContent.appendChild(message);
-            previewItemContent.appendChild(time);
-
-            // Add the preview-thumbnail and preview-item-content elements to the anchor element
-            notificationLink.appendChild(previewThumbnail);
-            notificationLink.appendChild(previewItemContent);
-
-            // Add the anchor element to the notificationTray element
-            notificationTray.appendChild(notificationLink);
-          });
-
+          // Add the anchor element to the notificationTray element
+          notificationTray.appendChild(notificationLink);
         });
 
+      });
 
-      function getTimeAgo(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffSec = Math.round(diffMs / 1000);
-        const diffMin = Math.round(diffSec / 60);
-        const diffHr = Math.round(diffMin / 60);
-        const diffDays = Math.round(diffHr / 24);
 
-        if (diffSec < 60) {
-          return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
-        } else if (diffMin < 60) {
-          return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
-        } else if (diffHr < 24) {
-          return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
-        } else if (diffDays === 1) {
-          return `1 day ago`;
-        } else if (diffDays < 30) {
-          return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-        } else {
-          const diffMonths = Math.floor(diffDays / 30);
-          return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
-        }
+    function getTimeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffSec = Math.round(diffMs / 1000);
+      const diffMin = Math.round(diffSec / 60);
+      const diffHr = Math.round(diffMin / 60);
+      const diffDays = Math.round(diffHr / 24);
+
+      if (diffSec < 60) {
+        return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
+      } else if (diffMin < 60) {
+        return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+      } else if (diffHr < 24) {
+        return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
+      } else if (diffDays === 1) {
+        return `1 day ago`;
+      } else if (diffDays < 30) {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+      } else {
+        const diffMonths = Math.floor(diffDays / 30);
+        return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
       }
-
-
-    } catch (error) {
-      console.log(error);
     }
-  }
 
-  window.onload = function(){
-    getNotifications();
+
+  } catch (error) {
+    console.log(error);
   }
+}
+
+window.onload = function () {
+  getNotifications();
+}

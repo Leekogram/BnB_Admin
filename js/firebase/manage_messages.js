@@ -100,7 +100,7 @@ onAuthStateChanged(auth, (user) => {
               <td>${data.recipientPhone}</td>
            
               <td>${data.subject}</td>
-              <td>${data.message}</td>
+              <td style=" max-width: 700px;word-wrap: break-word;overflow-wrap break-word; white-space: pre-wrap;font-size: 14px;" >${data.message}</td>
               <td>${data.optionalLink}</td>
               <td>${convertFirebaseTimestamp(data.timestamp)}</td>
 

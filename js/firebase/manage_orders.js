@@ -58,11 +58,6 @@ const colRef = collection(database, "orders");
         console.error("Error committing batch update:", error);
       });
     });
-  
-    // Call unsubscribe when you are finished listening to the snapshot.
-    // For example, if this function is used in a Vue.js component, you could
-    // call unsubscribe in the "beforeDestroy" hook.
-    // unsubscribe();
   }
 
 
@@ -143,7 +138,8 @@ async function getOrders() {
               <td>${data.productName}</td>
               <td>${data.productQuantity}</td>
               <td>${data.productPrice}</td>
-              <td id="instruction">${data.instructions}</td>
+              <td >     <div class="section-des">  ${data.instructions}</div>
+              </td>
               <td>${data.sourceType}</td>
             
               <td>${data.paymentStatus}</td>

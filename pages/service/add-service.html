@@ -32,6 +32,77 @@
 
     <Style>
         /* Modal styles */
+
+        #snackbar {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 2px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+    }
+
+    #snackbar.show {
+      visibility: visible;
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @-webkit-keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+
+
     .modal {
       display: none;
       position: fixed;
@@ -79,7 +150,7 @@
             ><img src="../../images/logo.png" class="mr-2" alt="logo"
           /></a>
           <a class="navbar-brand brand-logo-mini" href="../../index.html"
-            ><img src="../../images/logo-mini.svg" alt="logo"
+            ><img src="../../images/logo.png" alt="logo"
           /></a>
         </div>
         <div
@@ -208,12 +279,16 @@
                   <li class="nav-item">
                     <a class="nav-link" href="../inventory/add-item.html">Add Stock</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="../inventory/update-stock.html">Update Stock</a>
-                  </li>
+               
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
               </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../section.html">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Section</span>
+              </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-service" aria-expanded="false"
@@ -230,9 +305,7 @@
                   <li class="nav-item">
                     <a class="nav-link" href="./add-service.html">Add Services</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="./update-service.html">Update Service</a>
-                  </li>
+            
                   <!-- <li class="nav-item"> <a class="nav-link" href="pages/inventory/log.html">Log</a></li> -->
                 </ul>
               </div>
@@ -285,14 +358,14 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="row">
-              <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+              <div class="col-12   grid-margin">
                
                 <h6 class="font-weight-normal mb-0"><span class="text-danger"
                     id="notSpan"> You have <span id="notCount"></span> unread notification(s) !</span></h6>
               </div>
 
 
-              <div class="col-md-6 grid-margin">
+              <div class="col-md-8 grid-margin">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Add a Service</h4>
@@ -342,7 +415,7 @@
                         <label for="servicePrice">Service Price</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text bg-primary text-white"
+                            <span class="input-group-text bg-dark text-white"
                               >₦</span
                             >
                           </div>
@@ -395,8 +468,8 @@
                           required
                         ></textarea>
                       </div>
-                      <p class="text-danger" id="productExist">Service already exist in Services, please update it in <a href="./update-service.html">Update Service</a></p>
-                      <button type="submit" class="btn btn-primary mr-1" id="addProductBtn">
+                      <p class="text-danger" id="productExist">Services listed above already exist, please update or add a new service</p>
+                      <button type="submit" class="btn btn-dark mr-1" id="addProductBtn">
                         Submit
                       </button>
                       <button class="btn btn-light" type="reset" id="resetBtn">Reset</button>
@@ -405,64 +478,6 @@
                 </div>
               </div> 
 
-           <!--    <div class="col-md-6 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Add a Section</h4>
-                    <p class="card-description">Fill in appropriately</p>
-                    <form class="forms-sample" >
-                      <div class="form-group">
-                        <label>Section Image</label>
-                        <input
-                          type="file"
-                          name="img[]"
-                          class="file-upload-default"
-                        />
-                        <div class="input-group col-xs-12">
-                          <input
-                            type="text"
-                            class="form-control file-upload-info"
-                            disabled
-                            placeholder="Upload Section Image"
-                          />
-                          <span class="input-group-append">
-                            <button
-                              class="file-upload-browse btn btn-primary"
-                              type="button"
-                            >
-                              Upload
-                            </button>
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="form-group">
-                        <label for="sectionName">Section Name</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="sectionName"
-                          placeholder="HairStyling"
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label for="sectionDescription">About Section</label>
-                        <textarea
-                          class="form-control"
-                          id="sectionDescription"
-                          rows="4"
-                        ></textarea>
-                      </div>
-
-                      <button class="btn btn-primary mr-2"  >
-                        Submit
-                      </button>
-                      <button class="btn btn-light"  >Cancel</button>
-                    </form>
-                  </div>
-                </div>
-              </div> -->
             </div>
           </div>
           <div id="pageMessages">

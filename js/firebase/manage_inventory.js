@@ -4,12 +4,15 @@ import {
   getFirestore,
   collection,
   addDoc,
+  getDocs,
+  doc,
+  updateDoc,
   serverTimestamp,
   orderBy,
   query,
   onSnapshot,
   startAt,
-  endAt,where
+  endAt, where
 } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
 import {
   getStorage,
@@ -66,9 +69,12 @@ document.getElementById("productForm").addEventListener("submit", addProduct);
 
 const imageInput = document.getElementById("product-image");
 const imagePreview = document.getElementById("imagePreview");
+const imagePreviewContainer = document.getElementById("imagePreviewContainer");
 imageInput.addEventListener("change", () => {
-  const file = imageInput.files[0];
 
+  const file = imageInput.files[0];
+  imagePreview.style.height = '150px';
+  imagePreviewContainer.style.height = '150px'
   if (file) {
     const reader = new FileReader();
 
@@ -85,8 +91,12 @@ var inputField = document.getElementById("productTitle");
 var matchingValuesList = document.createElement("ul");
 document.getElementById("matchingValuesContainer").appendChild(matchingValuesList);
 
-// Add an event listener to the input field
-inputField.addEventListener("input", function () {
+
+inputField.addEventListener("input", searchMatchingValues);
+inputField.addEventListener("keyup", searchMatchingValues);
+inputField.addEventListener("focus", searchMatchingValues);
+
+function searchMatchingValues() {
   // Get the entered value
   var enteredValue = inputField.value;
 
@@ -98,46 +108,65 @@ inputField.addEventListener("input", function () {
     endAt(enteredValue + "\uf8ff")
   );
 
-  onSnapshot(q, (querySnapshot) => {
-    // Get the matching values
-    var matchingValues = querySnapshot.docs.map(function (doc) {
-      console.log(doc.data().productName);
-      return doc.data().productName;
-    });
+  getDocs(q)
+    .then((querySnapshot) => {
+      // Get the matching values
+      var matchingValues = querySnapshot.docs.map(function (doc) {
+        console.log(doc.data().productName);
+        return doc.data().productName;
+      });
 
-    // Clear the existing list items
-    matchingValuesList.innerHTML = "";
+      // Clear the existing list items
+      matchingValuesList.innerHTML = "";
 
-    // If there are matching values
-    if (matchingValues.length > 0) {
-      // Loop through the matching values and add them to the list
-      for (var i = 0; i < matchingValues.length; i++) {
-        var matchingValue = matchingValues[i];
-        var matchingValueItem = document.createElement("li");
-        matchingValueItem.textContent = matchingValue;
-        matchingValueItem.addEventListener("click", function () {
-          inputField.value = this.textContent;
-          matchingValuesList.innerHTML = "";
+      // If there are matching values
+      if (matchingValues.length > 0) {
+        // Loop through the matching values and add them to the list
+        for (var i = 0; i < matchingValues.length; i++) {
+          var matchingValue = matchingValues[i];
+          var matchingValueItem = document.createElement("li");
+          matchingValueItem.textContent = matchingValue;
+          matchingValueItem.addEventListener("click", function () {
+            inputField.value = this.textContent;
+            matchingValuesList.innerHTML = "";
+          });
+          matchingValuesList.appendChild(matchingValueItem);
+        }
 
-        });
-        matchingValuesList.appendChild(matchingValueItem);
+        // Display the list of matching values
+        document.getElementById("matchingValuesContainer").style.display = "block";
+        document.getElementById("productExist").style.display = "block";
+        document.getElementById("addProductBtn").style.display = "none";
+      } else {
+        // Hide the matching values container if there are no matching values
+        document.getElementById("matchingValuesContainer").style.display = "none";
+        document.getElementById("productExist").style.display = "none";
+        document.getElementById("addProductBtn").style.display = "block";
       }
+    })
+    .catch((error) => {
+      console.log("Error getting matching values: ", error);
+    });
+}
 
-      // Display the list of matching values
-      document.getElementById("matchingValuesContainer").style.display = "block";
-      document.getElementById("productExist").style.display = "block";
-      document.getElementById("addProductBtn").style.display = "none";
-     
-    } else {
-      // Hide the matching values container if there are no matching values
-      document.getElementById("matchingValuesContainer").style.display = "none";
-      document.getElementById("productExist").style.display = "none";
-      document.getElementById("addProductBtn").style.display = "block";
-    }
-  });
+async function getDeliveryPrice() {
+  try {
+    const querySnapshot = await getDocs(collection(database, "deliveryFee"));
+
+    querySnapshot.forEach((doc) => {
+      const deliveryPrice = doc.data().price;
+      console.log(deliveryPrice);
+      document.getElementById('deliveryPrice').value = deliveryPrice;
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Add an event listener to clear the matching values list when the input field loses focus
+inputField.addEventListener("blur", function () {
+  matchingValuesList.innerHTML = "";
 });
-
-
 function addProduct(e) {
   e.preventDefault();
 
@@ -217,31 +246,21 @@ async function addProducts(
     .then((docRef) => {
       addProductBtn.innerHTML = "Submit";
       // Data sent successfully!
-      createAlert(
-        "",
-        "Success!",
-        productName + " was added successfully",
-        "success",
-        true,
-        true,
-        "pageMessages"
-      );
+      showSnackbar(`Success ${productName} was added successfully`, true);
+    
       console.log("Product has been added successfully");
       document.getElementById("productForm").reset();
+      document.getElementById("productExist").style.display = "none";
+      document.getElementById("addProductBtn").style.display = "block";
       imagePreview.setAttribute("src", "");
     })
     .catch((error) => {
       // Data sent failed...
       addProductBtn.innerHTML = "Submit";
-      createAlert(
-        "Opps!",
-        "Something went wrong",
-        error + "",
-        "danger",
-        true,
-        false,
-        "pageMessages"
-      );
+      showSnackbar(`Opps! Something went wrong ${error} was added successfully`, false);
+    
+      document.getElementById("productExist").style.display = "none";
+      document.getElementById("addProductBtn").style.display = "block";
       console.log(error);
       // document.getElementById("productForm").reset();
     });
@@ -258,206 +277,174 @@ async function addProducts(
       // document.getElementById("productForm").reset();
     });
 }
+function showSnackbar(message, isSuccess) {
+  const snackbar = document.getElementById("snackbar");
+  snackbar.textContent = message;
 
-function createAlert(
-  title,
-  summary,
-  details,
-  severity,
-  dismissible,
-  autoDismiss,
-  appendToId
-) {
-  var iconMap = {
-    info: "fa fa-info-circle",
-    success: "fa fa-thumbs-up",
-    warning: "fa fa-exclamation-triangle",
-    danger: "fa ffa fa-exclamation-circle",
-  };
-
-  var iconAdded = false;
-
-  var alertClasses = ["alert", "animated", "flipInX"];
-  alertClasses.push("alert-" + severity.toLowerCase());
-
-  if (dismissible) {
-    alertClasses.push("alert-dismissible");
+  if (isSuccess) {
+    snackbar.style.backgroundColor = "#4CAF50";
+  } else {
+    snackbar.style.backgroundColor = "#F44336";
   }
 
-  var msgIcon = $("<i />", {
-    class: iconMap[severity], // you need to quote "class" since it's a reserved keyword
-  });
+  snackbar.classList.add("show");
 
-  var msg = $("<div />", {
-    class: alertClasses.join(" "), // you need to quote "class" since it's a reserved keyword
-  });
-
-  if (title) {
-    var msgTitle = $("<h4 />", {
-      html: title,
-    }).appendTo(msg);
-
-    if (!iconAdded) {
-      msgTitle.prepend(msgIcon);
-      iconAdded = true;
-    }
-  }
-
-  if (summary) {
-    var msgSummary = $("<strong />", {
-      html: summary,
-    }).appendTo(msg);
-
-    if (!iconAdded) {
-      msgSummary.prepend(msgIcon);
-      iconAdded = true;
-    }
-  }
-
-  if (details) {
-    var msgDetails = $("<p />", {
-      html: details,
-    }).appendTo(msg);
-
-    if (!iconAdded) {
-      msgDetails.prepend(msgIcon);
-      iconAdded = true;
-    }
-  }
-
-  if (dismissible) {
-    var msgClose = $("<span />", {
-      class: "close", // you need to quote "class" since it's a reserved keyword
-      "data-dismiss": "alert",
-      html: "<i class='fa fa-times-circle'></i>",
-    }).appendTo(msg);
-  }
-
-  $("#" + appendToId).prepend(msg);
-
-  if (autoDismiss) {
-    setTimeout(function () {
-      msg.addClass("flipOutX");
-      setTimeout(function () {
-        msg.remove();
-      }, 1000);
-    }, 5000);
-  }
+  setTimeout(() => {
+    snackbar.classList.remove("show");
+  }, 2000);
 }
 
-  //get notifications
-  async function getNotifications() {
-    try {
-      // Get a reference to the notificationTray element
-      const notificationTray = document.getElementById('notificationTray');
-      // const notSpan = document.getElementById('notSpan');
+
+// Add an event listener to the form submit event
+const updateDeliveryFeeBtn = document.getElementById("updateDeliveryFeeBtn");
+updateDeliveryFeeBtn.addEventListener("click", function (event) {
+  event.preventDefault(); // Prevent the default form submission
+  updateDeliveryPrice(); // Call the update function
+});
+
+function updateDeliveryPrice() {
+  const deliveryPrice = document.getElementById("deliveryPrice").value;
+
+  // Update the price in the Firebase database
+  const deliveryFeeDocRef = doc(database, "deliveryFee", "deliveryprice");
+  updateDoc(deliveryFeeDocRef, {
+    price: deliveryPrice
+  }) .then(() => {
+    // Product updated successfully
+    // Show success message or perform any additional actions
+    addDoc(collection(database, "log"), {
+      comment: `delivery price was modified to ${deliveryPrice}`,
+      timestamp: serverTimestamp(),
+    });
+ 
+    showSnackbar("Price updated successfully", true);
+  })
+  .catch((error) => {
+    // Error occurred while updating the product
+    console.error("Error updating price:", error);
+
+    showSnackbar("Failed to update price, please try again", false);
+  })
+
+
+ 
+}
+
+
+//get notifications
+async function getNotifications() {
+  try {
+    // Get a reference to the notificationTray element
+    const notificationTray = document.getElementById('notificationTray');
+    // const notSpan = document.getElementById('notSpan');
 
 
 
-      const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
-      await
-        onSnapshot(q, (querySnapshot) => {
-          const notificationCount = querySnapshot.size;
+    const q = query(collection(database, "orderNotification"), where("status", "==", "unread"), orderBy("timestamp", "desc"));
+    await
+      onSnapshot(q, (querySnapshot) => {
+        const notificationCount = querySnapshot.size;
 
-          if (querySnapshot.size > 0) {
-            document.getElementById('notSpan').style.visibility = "visible";
-            document.getElementById('count').innerHTML = notificationCount
-            document.getElementById('notCount').innerHTML = notificationCount;
-            document.getElementById('notificationDropdown').classList.add("count-indicator");
+        if (querySnapshot.size > 0) {
+          document.getElementById('notSpan').style.visibility = "visible";
+          document.getElementById('count').innerHTML = notificationCount
+          document.getElementById('notCount').innerHTML = notificationCount;
+          document.getElementById('notificationDropdown').classList.add("count-indicator");
+        } else {
+          document.getElementById('notSpan').style.visibility = "hidden";
+          document.getElementById('notificationDropdown').classList.remove("count-indicator");
+        }
+
+
+        // Loop through each document in the query snapshot and create an HTML element for it
+        querySnapshot.forEach((doc) => {
+          // Get the data from the document
+          const notification = doc.data();
+
+          // Create a new anchor element for the notification
+          const notificationLink = document.createElement('a');
+          notificationLink.classList.add('dropdown-item', 'preview-item');
+          if (notification.type == "service") {
+            notificationLink.setAttribute('href', './booking-page.html');
+          } else if (notification.type == "feedback") {
+            notificationLink.setAttribute('href', '../feedbacks/feedbacks.html');
           } else {
-            document.getElementById('notSpan').style.visibility = "hidden";
-            document.getElementById('notificationDropdown').classList.remove("count-indicator");
+            notificationLink.setAttribute('href', '../orders/orders.html');
           }
 
 
-          // Loop through each document in the query snapshot and create an HTML element for it
-          querySnapshot.forEach((doc) => {
-            // Get the data from the document
-            const notification = doc.data();
 
-            // Create a new anchor element for the notification
-            const notificationLink = document.createElement('a');
-            notificationLink.classList.add('dropdown-item', 'preview-item');
-            if (notification.type == "service") {
-              notificationLink.setAttribute('href', './booking-page.html');
-            } else if (notification.type == "feedback") {
-              notificationLink.setAttribute('href', '../feedbacks/feedbacks.html');
-            } else {
-              notificationLink.setAttribute('href', '../orders/orders.html');
-            }
+          // Create the preview-thumbnail element
+          const previewThumbnail = document.createElement('div');
+          previewThumbnail.classList.add('preview-thumbnail');
 
+          // Create the preview-icon element
+          const previewIcon = document.createElement('div');
+          previewIcon.classList.add('preview-icon', 'bg-success');
+          const icon = document.createElement('i');
+          icon.classList.add('ti-info-alt', 'mx-0');
+          previewIcon.appendChild(icon);
+          previewThumbnail.appendChild(previewIcon);
 
+          // Create the preview-item-content element
+          const previewItemContent = document.createElement('div');
+          previewItemContent.classList.add('preview-item-content');
+          const subject = document.createElement('h6');
+          subject.classList.add('preview-subject', 'font-weight-normal');
+          subject.textContent = notification.title;
+          const message = document.createElement('p');
+          message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+          message.textContent = notification.message;
+          const time = document.createElement('p');
+          time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
+          time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
+          previewItemContent.appendChild(subject);
+          previewItemContent.appendChild(message);
+          previewItemContent.appendChild(time);
 
-            // Create the preview-thumbnail element
-            const previewThumbnail = document.createElement('div');
-            previewThumbnail.classList.add('preview-thumbnail');
+          // Add the preview-thumbnail and preview-item-content elements to the anchor element
+          notificationLink.appendChild(previewThumbnail);
+          notificationLink.appendChild(previewItemContent);
 
-            // Create the preview-icon element
-            const previewIcon = document.createElement('div');
-            previewIcon.classList.add('preview-icon', 'bg-success');
-            const icon = document.createElement('i');
-            icon.classList.add('ti-info-alt', 'mx-0');
-            previewIcon.appendChild(icon);
-            previewThumbnail.appendChild(previewIcon);
-
-            // Create the preview-item-content element
-            const previewItemContent = document.createElement('div');
-            previewItemContent.classList.add('preview-item-content');
-            const subject = document.createElement('h6');
-            subject.classList.add('preview-subject', 'font-weight-normal');
-            subject.textContent = notification.title;
-            const message = document.createElement('p');
-            message.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
-            message.textContent = notification.message;
-            const time = document.createElement('p');
-            time.classList.add('font-weight-light', 'small-text', 'mb-0', 'text-muted');
-            time.textContent = getTimeAgo(notification.timestamp.toDate().toLocaleString());
-            previewItemContent.appendChild(subject);
-            previewItemContent.appendChild(message);
-            previewItemContent.appendChild(time);
-
-            // Add the preview-thumbnail and preview-item-content elements to the anchor element
-            notificationLink.appendChild(previewThumbnail);
-            notificationLink.appendChild(previewItemContent);
-
-            // Add the anchor element to the notificationTray element
-            notificationTray.appendChild(notificationLink);
-          });
-
+          // Add the anchor element to the notificationTray element
+          notificationTray.appendChild(notificationLink);
         });
 
+      });
 
-      function getTimeAgo(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffSec = Math.round(diffMs / 1000);
-        const diffMin = Math.round(diffSec / 60);
-        const diffHr = Math.round(diffMin / 60);
-        const diffDays = Math.round(diffHr / 24);
 
-        if (diffSec < 60) {
-          return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
-        } else if (diffMin < 60) {
-          return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
-        } else if (diffHr < 24) {
-          return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
-        } else if (diffDays === 1) {
-          return `1 day ago`;
-        } else if (diffDays < 30) {
-          return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-        } else {
-          const diffMonths = Math.floor(diffDays / 30);
-          return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
-        }
+    function getTimeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffSec = Math.round(diffMs / 1000);
+      const diffMin = Math.round(diffSec / 60);
+      const diffHr = Math.round(diffMin / 60);
+      const diffDays = Math.round(diffHr / 24);
+
+      if (diffSec < 60) {
+        return `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
+      } else if (diffMin < 60) {
+        return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+      } else if (diffHr < 24) {
+        return `${diffHr} hour${diffHr !== 1 ? 's' : ''} ago`;
+      } else if (diffDays === 1) {
+        return `1 day ago`;
+      } else if (diffDays < 30) {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+      } else {
+        const diffMonths = Math.floor(diffDays / 30);
+        return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`;
       }
-
-
-    } catch (error) {
-      console.log(error);
     }
-  }
 
-  window.onload = function(){
-    getNotifications();
+
+  } catch (error) {
+    console.log(error);
   }
+}
+
+window.onload = function () {
+  getNotifications();
+  getDeliveryPrice();
+}
